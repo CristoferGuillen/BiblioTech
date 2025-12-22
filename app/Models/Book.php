@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Book extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'title',
         'author',
@@ -19,9 +22,9 @@ class Book extends Model
     protected $casts = [
         'publication_year' => 'date:Y',
     ];
-    public function Categories (){
+    public function Category (){
 
-        return $this->belongsTo(Categories::class, 'category_id');
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
 

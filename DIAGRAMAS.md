@@ -2,325 +2,387 @@
 
 > **Versión:** 1.0  
 > **Sistema:** BiblioTech - Gestión de Biblioteca  
+> **Última actualización:** Diciembre 2024  
 > **Formato:** Mermaid (renderizado automático en GitHub)
 
 ---
 
 ## 📑 Tabla de Contenidos
 
-1. [Diagrama Entidad-Relación (ERD)](#1-diagrama-entidad-relación-erd)
-2. [Diagramas de Flujo](#2-diagramas-de-flujo)
-3. [Diagramas UML](#3-diagramas-uml)
-4. [Diagramas de Secuencia](#4-diagramas-de-secuencia)
-5. [Diagramas de Estados](#5-diagramas-de-estados)
+- [1. Diagrama Entidad-Relación (ERD)](#1-diagrama-entidad-relación-erd)
+- [2. Diagramas de Flujo de Procesos](#2-diagramas-de-flujo-de-procesos)
+- [3. Diagramas UML de Clases](#3-diagramas-uml-de-clases)
+- [4. Diagramas de Secuencia](#4-diagramas-de-secuencia)
+- [5. Diagramas de Estados](#5-diagramas-de-estados)
 
 ---
 
 ## 1. Diagrama Entidad-Relación (ERD)
 
-### 1.1 ERD Completo del Sistema
+### 1.1 ERD Completo - Base de Datos BiblioTech
 
 ```mermaid
 erDiagram
-    USERS ||--o{ LOANS : "realiza"
-    BOOKS ||--o{ LOANS : "tiene"
-    CATEGORIES ||--o{ BOOKS : "agrupa"
-    USERS ||--o{ SESSIONS : "posee"
+    USUARIOS ||--o{ PRESTAMOS : realiza
+    LIBROS ||--o{ PRESTAMOS : "es prestado"
+    CATEGORIAS ||--o{ LIBROS : contiene
+    USUARIOS ||--o{ SESIONES : tiene
 
-    USERS {
-        bigint id PK
-        varchar name
-        varchar email UK
-        varchar password
-        varchar phone
-        enum role "admin, librarian, member"
-        timestamp email_verified_at
-        varchar remember_token
-        timestamp deleted_at "soft delete"
-        timestamp created_at
-        timestamp updated_at
+    USUARIOS {
+        bigint id PK "Clave primaria"
+        varchar nombre "Nombre completo"
+        varchar email UK "Email único"
+        varchar contrasena "Password hasheado"
+        varchar telefono "Teléfono opcional"
+        enum rol "admin, librarian, member"
+        timestamp email_verificado "Verificación email"
+        varchar token_recordar "Remember token"
+        timestamp eliminado_en "Soft delete"
+        timestamp creado_en
+        timestamp actualizado_en
     }
 
-    BOOKS {
-        bigint id PK
-        varchar title
-        varchar author
-        varchar isbn UK
-        year publication_year
-        bigint category_id FK
-        int copies_available
-        enum status "available, unavailable"
-        timestamp deleted_at "soft delete"
-        timestamp created_at
-        timestamp updated_at
+    LIBROS {
+        bigint id PK "Clave primaria"
+        varchar titulo "Título del libro"
+        varchar autor "Autor del libro"
+        varchar isbn UK "ISBN único"
+        year anio_publicacion "Año"
+        bigint categoria_id FK "FK a categorias"
+        int copias_disponibles "Inventario"
+        enum estado "available, unavailable"
+        timestamp eliminado_en "Soft delete"
+        timestamp creado_en
+        timestamp actualizado_en
     }
 
-    LOANS {
-        bigint id PK
-        bigint user_id FK
-        bigint book_id FK
-        date loan_date
-        date due_date
-        date return_date
-        enum status "ongoing, returned, overdue"
-        timestamp created_at
-        timestamp updated_at
+    PRESTAMOS {
+        bigint id PK "Clave primaria"
+        bigint usuario_id FK "FK a usuarios"
+        bigint libro_id FK "FK a libros"
+        date fecha_prestamo "Fecha del préstamo"
+        date fecha_devolucion "Fecha límite"
+        date fecha_devuelto "Fecha real devolución"
+        enum estado "ongoing, returned, overdue"
+        timestamp creado_en
+        timestamp actualizado_en
     }
 
-    CATEGORIES {
-        bigint id PK
-        varchar name
-        text description
-        timestamp created_at
-        timestamp updated_at
+    CATEGORIAS {
+        bigint id PK "Clave primaria"
+        varchar nombre UK "Nombre único"
+        text descripcion "Descripción opcional"
+        timestamp eliminado_en "Soft delete"
+        timestamp creado_en
+        timestamp actualizado_en
     }
 
-    SESSIONS {
-        varchar id PK
-        bigint user_id FK
-        varchar ip_address
-        text user_agent
-        longtext payload
-        int last_activity
+    SESIONES {
+        varchar id PK "Session ID"
+        bigint usuario_id FK "FK a usuarios"
+        varchar direccion_ip "IP del cliente"
+        text agente_usuario "User agent"
+        longtext carga "Session data"
+        int ultima_actividad "Timestamp"
     }
 ```
 
-### 1.2 Cardinalidades Detalladas
+### 1.2 Restricciones y Relaciones Detalladas
 
-| Relación | Entidad Origen | Cardinalidad | Entidad Destino | Descripción |
-|-----------|----------------|--------------|-----------------|-------------|
-| realiza | USERS | 1:N | LOANS | Un usuario puede realizar muchos préstamos |
-| tiene | BOOKS | 1:N | LOANS | Un libro puede tener muchos préstamos |
-| agrupa | CATEGORIES | 1:N | BOOKS | Una categoría agrupa muchos libros |
-| posee | USERS | 1:N | SESSIONS | Un usuario puede tener múltiples sesiones |
+| Tabla Origen | Columna | Tipo Restricción | Tabla Destino | Columna | Acción |
+|--------------|---------|-------------------|---------------|---------|--------|
+| LIBROS | categoria_id | FOREIGN KEY | CATEGORIAS | id | ON DELETE RESTRICT |
+| PRESTAMOS | usuario_id | FOREIGN KEY | USUARIOS | id | ON DELETE RESTRICT |
+| PRESTAMOS | libro_id | FOREIGN KEY | LIBROS | id | ON DELETE RESTRICT |
+| SESIONES | usuario_id | FOREIGN KEY | USUARIOS | id | ON DELETE CASCADE |
+| USUARIOS | email | UNIQUE | - | - | - |
+| LIBROS | isbn | UNIQUE | - | - | - |
+| CATEGORIAS | nombre | UNIQUE | - | - | - |
 
-### 1.3 Restricciones de Integridad
+### 1.3 Índices de Base de Datos
 
-```mermaid
-erDiagram
-    BOOKS ||--|| CATEGORIES : "ON DELETE RESTRICT"
-    LOANS ||--|| USERS : "ON DELETE RESTRICT"
-    LOANS ||--|| BOOKS : "ON DELETE RESTRICT"
-    SESSIONS }o--|| USERS : "ON DELETE CASCADE"
+```sql
+-- Índices en tabla USUARIOS
+CREATE UNIQUE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_role ON users(role);
+CREATE INDEX idx_users_deleted_at ON users(deleted_at);
 
-    BOOKS {
-        constraint fk_category "FOREIGN KEY"
-        constraint uk_isbn "UNIQUE"
-        constraint chk_status "CHECK IN available unavailable"
-    }
+-- Índices en tabla LIBROS
+CREATE UNIQUE INDEX idx_books_isbn ON books(isbn);
+CREATE INDEX idx_books_category_id ON books(category_id);
+CREATE INDEX idx_books_status ON books(status);
+CREATE INDEX idx_books_deleted_at ON books(deleted_at);
 
-    USERS {
-        constraint uk_email "UNIQUE"
-        constraint chk_role "CHECK IN admin librarian member"
-    }
+-- Índices en tabla PRESTAMOS
+CREATE INDEX idx_loans_user_id ON loans(user_id);
+CREATE INDEX idx_loans_book_id ON loans(book_id);
+CREATE INDEX idx_loans_status ON loans(status);
+CREATE INDEX idx_loans_due_date ON loans(due_date);
 
-    LOANS {
-        constraint chk_status "CHECK IN ongoing returned overdue"
-        constraint chk_dates "due_date >= loan_date"
-    }
+-- Índices en tabla CATEGORIAS
+CREATE UNIQUE INDEX idx_categories_name ON categories(name);
+CREATE INDEX idx_categories_deleted_at ON categories(deleted_at);
+
+-- Índices en tabla SESIONES
+CREATE INDEX idx_sessions_user_id ON sessions(user_id);
+CREATE INDEX idx_sessions_last_activity ON sessions(last_activity);
 ```
 
 ---
 
-## 2. Diagramas de Flujo
+## 2. Diagramas de Flujo de Procesos
 
-### 2.1 Flujo de Autenticación y Autorización
+### 2.1 Proceso de Autenticación de Usuario
+
 ```mermaid
 flowchart TD
-    Start([Usuario accede al sistema]) --> Login{{¿Tiene cuenta?}}
-    Login -->|No| Register[Registrarse]
-    Login -->|Sí| FormLogin[Ingresar email y contraseña]
+    A([Inicio: Usuario accede al sistema]) --> B{{¿Tiene cuenta registrada?}}
     
-    Register --> FormRegister[Completar formulario]
-    FormRegister --> ValidateRegister{Validar datos}
-    ValidateRegister -->|Inválido| ErrorRegister[Mostrar errores]
-    ErrorRegister --> FormRegister
-    ValidateRegister -->|Válido| CreateUser[Crear usuario con rol member]
-    CreateUser --> FormLogin
+    B -->|No| C[Ir a formulario de registro]
+    C --> D[Completar datos: nombre, email, teléfono, contraseña]
+    D --> E{Validar datos de registro}
+    E -->|Datos inválidos| F[Mostrar mensajes de error]
+    F --> C
+    E -->|Datos válidos| G[Crear usuario en base de datos<br/>rol = member por defecto]
+    G --> H[Redirigir a formulario de login]
     
-    FormLogin --> ValidateLogin{Credenciales válidas?}
-    ValidateLogin -->|No| ErrorLogin[Mostrar error]
-    ErrorLogin --> FormLogin
+    B -->|Sí| H
+    H --> I[Ingresar email y contraseña]
+    I --> J[Enviar credenciales a Laravel Fortify]
+    J --> K{Verificar credenciales}
     
-    ValidateLogin -->|Sí| CreateSession[Crear sesión en DB]
-    CreateSession --> CheckRole{Verificar rol}
+    K -->|Incorrectas| L[Mostrar error:<br/>Credenciales inválidas]
+    L --> I
     
-    CheckRole -->|Admin| AdminDash[/admin/dashboard]
-    CheckRole -->|Librarian| LibrarianDash[/librarian/dashboard]
-    CheckRole -->|Member| MemberDash[/member/dashboard]
-    CheckRole -->|Desconocido| Unauthorized[/unauthorized]
+    K -->|Correctas| M[Crear registro en tabla sessions]
+    M --> N[Obtener rol del usuario]
+    N --> O{Verificar rol}
     
-    AdminDash --> End([Usuario autenticado])
-    LibrarianDash --> End
-    MemberDash --> End
-    Unauthorized --> End
+    O -->|rol = admin| P[Redirigir a /admin/dashboard]
+    O -->|rol = librarian| Q[Redirigir a /librarian/dashboard]
+    O -->|rol = member| R[Redirigir a /member/dashboard]
+    O -->|rol desconocido| S[Redirigir a /unauthorized]
+    
+    P --> T([Fin: Usuario autenticado])
+    Q --> T
+    R --> T
+    S --> U([Fin: Acceso denegado])
 
-    style Start fill:#90EE90
-    style End fill:#90EE90
-    style ErrorLogin fill:#FFB6C6
-    style ErrorRegister fill:#FFB6C6
-    style Unauthorized fill:#FFB6C6
-    style CreateSession fill:#87CEEB
-    style CheckRole fill:#87CEEB
+    style A fill:#90EE90,stroke:#333,stroke-width:2px
+    style T fill:#90EE90,stroke:#333,stroke-width:2px
+    style U fill:#FFB6C6,stroke:#333,stroke-width:2px
+    style L fill:#FFB6C6,stroke:#333,stroke-width:2px
+    style F fill:#FFB6C6,stroke:#333,stroke-width:2px
+    style M fill:#87CEEB,stroke:#333,stroke-width:2px
+    style G fill:#87CEEB,stroke:#333,stroke-width:2px
 ```
 
-### 2.2 Flujo de Creación de Préstamo
+### 2.2 Proceso de Creación de Préstamo
 
 ```mermaid
 flowchart TD
-    Start([Bibliotecario accede a /loans/create]) --> LoadData[Cargar usuarios y libros disponibles]
-    LoadData --> DisplayForm[Mostrar formulario]
+    A([Inicio: Bibliotecario/Admin accede a crear préstamo]) --> B[GET /loans/create]
+    B --> C[LoanController->create ejecuta]
+    C --> D[Consultar todos los usuarios de la BD]
+    C --> E[Consultar libros WHERE copias_disponibles > 0]
+    D --> F[Cargar vista loans/create.blade.php]
+    E --> F
+    F --> G[Mostrar formulario con:<br/>- Select de usuarios<br/>- Select de libros disponibles]
     
-    DisplayForm --> SelectUser[Seleccionar usuario]
-    SelectUser --> SelectBook[Seleccionar libro]
-    SelectBook --> Submit[Enviar formulario]
+    G --> H[Usuario selecciona un usuario del sistema]
+    H --> I[Usuario selecciona un libro disponible]
+    I --> J[Usuario envía formulario]
     
-    Submit --> ValidateForm{Validar datos}
-    ValidateForm -->|Inválido| ShowErrors[Mostrar errores de validación]
-    ShowErrors --> DisplayForm
+    J --> K[POST /loans]
+    K --> L[LoanController->store recibe datos]
+    L --> M{Validar datos:<br/>- usuario_id: required exists users<br/>- libro_id: required exists books}
     
-    ValidateForm -->|Válido| CheckCopies{Copias disponibles > 0?}
-    CheckCopies -->|No| ErrorNoCopies[Error: No hay copias disponibles]
-    ErrorNoCopies --> DisplayForm
+    M -->|Validación falla| N[Retornar errores de validación]
+    N --> G
     
-    CheckCopies -->|Sí| CreateLoan[Crear registro en loans]
-    CreateLoan --> SetDates[loan_date = now<br/>due_date = now + 14 días<br/>status = ongoing]
-    SetDates --> DecrementCopies[Decrementar copies_available del libro]
-    DecrementCopies --> Success[Redirigir a /loans con mensaje de éxito]
+    M -->|Validación exitosa| O[Buscar libro por libro_id]
+    O --> P{Verificar:<br/>copias_disponibles > 0?}
     
-    Success --> End([Préstamo creado])
+    P -->|No hay copias| Q[Retornar error:<br/>No hay copias disponibles para este libro]
+    Q --> G
+    
+    P -->|Hay copias| R[Crear registro en tabla loans:<br/>- usuario_id<br/>- libro_id<br/>- fecha_prestamo = now<br/>- fecha_devolucion = now + 14 días<br/>- estado = ongoing]
+    R --> S[Ejecutar:<br/>UPDATE books<br/>SET copias_disponibles = copias_disponibles - 1<br/>WHERE id = libro_id]
+    S --> T[Guardar ambos cambios en base de datos]
+    T --> U[Redirigir a /loans con mensaje:<br/>Préstamo creado exitosamente]
+    
+    U --> V([Fin: Préstamo registrado])
 
-    style Start fill:#90EE90
-    style End fill:#90EE90
-    style ErrorNoCopies fill:#FFB6C6
-    style ShowErrors fill:#FFB6C6
-    style CreateLoan fill:#87CEEB
-    style DecrementCopies fill:#87CEEB
+    style A fill:#90EE90,stroke:#333,stroke-width:2px
+    style V fill:#90EE90,stroke:#333,stroke-width:2px
+    style Q fill:#FFB6C6,stroke:#333,stroke-width:2px
+    style N fill:#FFB6C6,stroke:#333,stroke-width:2px
+    style R fill:#87CEEB,stroke:#333,stroke-width:2px
+    style S fill:#87CEEB,stroke:#333,stroke-width:2px
+    style T fill:#87CEEB,stroke:#333,stroke-width:2px
 ```
 
-### 2.3 Flujo de Devolución de Libro
+### 2.3 Proceso de Devolución de Libro
 
 ```mermaid
 flowchart TD
-    Start([Bibliotecario hace clic en Devolver]) --> GetLoan[PATCH /loans/id/return]
-    GetLoan --> FindLoan[Buscar préstamo con withTrashed]
+    A([Inicio: Devolver libro]) --> B[Usuario hace clic en botón Devolver<br/>en la vista loans/index]
+    B --> C[PATCH /loans/id/return]
+    C --> D[LoanController->return recibe id del préstamo]
     
-    FindLoan --> LoanExists{Préstamo existe?}
-    LoanExists -->|No| Error404[Error 404: Préstamo no encontrado]
-    Error404 --> End([Proceso terminado])
+    D --> E[Buscar préstamo con Eloquent:<br/>Loan::with book withTrashed->findOrFail id]
+    E --> F{Préstamo encontrado?}
     
-    LoanExists -->|Sí| UpdateStatus[Actualizar loan:<br/>status = returned<br/>return_date = now]
-    UpdateStatus --> BookExists{Libro existe?}
+    F -->|No encontrado| G[Lanzar excepción 404:<br/>Préstamo no existe]
+    G --> H([Fin: Error 404])
     
-    BookExists -->|No eliminado| IncrementCopies[Incrementar copies_available]
-    BookExists -->|Sí eliminado| SkipIncrement[No actualizar inventario]
+    F -->|Encontrado| I[Obtener objeto préstamo con relación libro]
+    I --> J[Actualizar campos del préstamo:<br/>- estado = returned<br/>- fecha_devuelto = now]
+    J --> K[Guardar cambios:<br/>UPDATE loans SET estado, fecha_devuelto<br/>WHERE id = id_prestamo]
     
-    IncrementCopies --> SaveChanges[Guardar cambios]
-    SkipIncrement --> SaveChanges
-    SaveChanges --> Success[Redirigir a /loans con mensaje éxito]
-    Success --> EndSuccess([Devolución exitosa])
+    K --> L{Verificar si libro existe<br/>libro no es NULL?}
+    
+    L -->|Libro eliminado anteriormente| M[No actualizar inventario<br/>El libro tiene deleted_at != NULL]
+    M --> N[Redirigir a /loans con mensaje:<br/>Libro devuelto exitosamente]
+    
+    L -->|Libro existe| O[Incrementar inventario:<br/>UPDATE books<br/>SET copias_disponibles = copias_disponibles + 1<br/>WHERE id = libro_id]
+    O --> N
+    
+    N --> P([Fin: Devolución registrada])
 
-    style Start fill:#90EE90
-    style EndSuccess fill:#90EE90
-    style Error404 fill:#FFB6C6
-    style UpdateStatus fill:#87CEEB
-    style IncrementCopies fill:#87CEEB
+    style A fill:#90EE90,stroke:#333,stroke-width:2px
+    style P fill:#90EE90,stroke:#333,stroke-width:2px
+    style H fill:#FFB6C6,stroke:#333,stroke-width:2px
+    style G fill:#FFB6C6,stroke:#333,stroke-width:2px
+    style J fill:#87CEEB,stroke:#333,stroke-width:2px
+    style K fill:#87CEEB,stroke:#333,stroke-width:2px
+    style O fill:#87CEEB,stroke:#333,stroke-width:2px
 ```
 
-### 2.4 Flujo de Renovación de Préstamo
+### 2.4 Proceso de Renovación de Préstamo
 
 ```mermaid
 flowchart TD
-    Start([Usuario hace clic en Renovar]) --> GetLoan[PATCH /loans/id/renew]
-    GetLoan --> FindLoan[Buscar préstamo con libro]
+    A([Inicio: Renovar préstamo]) --> B[Usuario hace clic en Renovar]
+    B --> C[PATCH /loans/id/renew]
+    C --> D[LoanController->renew recibe id]
     
-    FindLoan --> LoanExists{Préstamo existe?}
-    LoanExists -->|No| Error404[Error 404]
-    Error404 --> End([Error])
+    D --> E[Buscar préstamo:<br/>Loan::with book withTrashed->findOrFail id]
+    E --> F{Préstamo existe?}
     
-    LoanExists -->|Sí| BookDeleted{Libro eliminado?}
-    BookDeleted -->|Sí| ErrorDeleted[Error: Libro eliminado<br/>no se puede renovar]
-    ErrorDeleted --> End
+    F -->|No| G[Error 404: Préstamo no encontrado]
+    G --> H([Fin: Error])
     
-    BookDeleted -->|No| ExtendDate[Extender due_date + 7 días]
-    ExtendDate --> Save[Guardar cambios]
-    Save --> Success[Redirigir con mensaje éxito]
-    Success --> EndSuccess([Renovación exitosa])
+    F -->|Sí| I[Obtener relación con libro]
+    I --> J{Libro existe<br/>libro != NULL?}
+    
+    J -->|Libro eliminado| K[Retornar error:<br/>No se puede renovar el libro ha sido eliminado]
+    K --> L[Redirigir a /loans con mensaje de error]
+    L --> H
+    
+    J -->|Libro existe| M[Obtener fecha_devolucion actual del préstamo]
+    M --> N[Calcular nueva fecha:<br/>nueva_fecha = fecha_devolucion actual + 7 días]
+    N --> O[Actualizar préstamo:<br/>UPDATE loans<br/>SET fecha_devolucion = nueva_fecha<br/>WHERE id = id_prestamo]
+    O --> P[Guardar cambios en base de datos]
+    P --> Q[Redirigir a /loans con mensaje:<br/>Préstamo renovado exitosamente]
+    
+    Q --> R([Fin: Préstamo renovado])
 
-    style Start fill:#90EE90
-    style EndSuccess fill:#90EE90
-    style Error404 fill:#FFB6C6
-    style ErrorDeleted fill:#FFB6C6
-    style ExtendDate fill:#87CEEB
+    style A fill:#90EE90,stroke:#333,stroke-width:2px
+    style R fill:#90EE90,stroke:#333,stroke-width:2px
+    style H fill:#FFB6C6,stroke:#333,stroke-width:2px
+    style K fill:#FFB6C6,stroke:#333,stroke-width:2px
+    style G fill:#FFB6C6,stroke:#333,stroke-width:2px
+    style O fill:#87CEEB,stroke:#333,stroke-width:2px
+    style P fill:#87CEEB,stroke:#333,stroke-width:2px
 ```
 
-### 2.5 Flujo de Soft Delete y Restauración
+### 2.5 Proceso de Eliminación Suave (Soft Delete) de Libro
 
 ```mermaid
 flowchart TD
-    Start([Usuario elimina un libro]) --> DeleteRequest[DELETE /books/id]
-    DeleteRequest --> FindBook[Buscar libro por ID]
+    A([Inicio: Eliminar libro]) --> B[Usuario hace clic en Eliminar<br/>en gestión de libros]
+    B --> C[DELETE /books/id]
+    C --> D[BookController->destroy recibe id]
     
-    FindBook --> BookExists{Libro existe?}
-    BookExists -->|No| Error404[Error 404]
-    Error404 --> End([Proceso terminado])
+    D --> E[Buscar libro:<br/>Book::findOrFail id]
+    E --> F{Libro existe?}
     
-    BookExists -->|Sí| SoftDelete[Establecer deleted_at = now]
-    SoftDelete --> HideFromQueries[Libro oculto en consultas normales]
-    HideFromQueries --> SuccessDelete[Redirigir con mensaje éxito]
-    SuccessDelete --> ShowTrashed[Libro visible solo con withTrashed]
+    F -->|No existe| G[Error 404: Libro no encontrado]
+    G --> H([Fin: Error])
     
-    ShowTrashed --> RestoreAction{Usuario restaura?}
-    RestoreAction -->|No| StayDeleted([Permanece eliminado])
-    RestoreAction -->|Sí| RestoreRequest[PATCH /books/id/restore]
+    F -->|Existe| I[Ejecutar soft delete:<br/>libro->delete]
+    I --> J[Laravel actualiza:<br/>UPDATE books<br/>SET deleted_at = CURRENT_TIMESTAMP<br/>WHERE id = id_libro]
+    J --> K[Libro marcado como eliminado<br/>pero NO se borra de la BD]
+    K --> L[Redirigir a /books con mensaje:<br/>Libro eliminado exitosamente]
     
-    RestoreRequest --> FindTrashed[Buscar con withTrashed]
-    FindTrashed --> SetNull[Establecer deleted_at = NULL]
-    SetNull --> VisibleAgain[Libro visible nuevamente]
-    VisibleAgain --> EndRestore([Libro restaurado])
+    L --> M{Usuario desea restaurar?}
+    
+    M -->|No| N([Fin: Libro permanece eliminado<br/>No visible en consultas normales])
+    
+    M -->|Sí| O[Usuario hace clic en Restaurar]
+    O --> P[PATCH /books/id/restore]
+    P --> Q[BookController->restore recibe id]
+    Q --> R[Buscar libro incluyendo eliminados:<br/>Book::withTrashed->findOrFail id]
+    R --> S[Ejecutar restauración:<br/>libro->restore]
+    S --> T[Laravel actualiza:<br/>UPDATE books<br/>SET deleted_at = NULL<br/>WHERE id = id_libro]
+    T --> U[Libro visible nuevamente en consultas]
+    U --> V[Redirigir a /books con mensaje:<br/>Libro restaurado exitosamente]
+    
+    V --> W([Fin: Libro restaurado])
 
-    style Start fill:#90EE90
-    style EndRestore fill:#90EE90
-    style StayDeleted fill:#FFE4B5
-    style Error404 fill:#FFB6C6
-    style SoftDelete fill:#87CEEB
-    style SetNull fill:#87CEEB
+    style A fill:#90EE90,stroke:#333,stroke-width:2px
+    style W fill:#90EE90,stroke:#333,stroke-width:2px
+    style N fill:#FFE4B5,stroke:#333,stroke-width:2px
+    style H fill:#FFB6C6,stroke:#333,stroke-width:2px
+    style G fill:#FFB6C6,stroke:#333,stroke-width:2px
+    style J fill:#87CEEB,stroke:#333,stroke-width:2px
+    style T fill:#87CEEB,stroke:#333,stroke-width:2px
 ```
 
-### 2.6 Flujo del Middleware CheckRole
+### 2.6 Flujo de Middleware de Roles (CheckRole)
 
 ```mermaid
 flowchart TD
-    Start([Petición HTTP a ruta protegida]) --> MiddlewareAuth{Middleware: auth}
+    A([Inicio: Petición HTTP]) --> B[Usuario envía petición a ruta protegida<br/>Ejemplo: GET /books/create]
+    B --> C[Router web.php identifica la ruta]
+    C --> D[Aplicar middleware: auth]
     
-    MiddlewareAuth --> IsAuthenticated{¿Usuario autenticado?}
-    IsAuthenticated -->|No| RedirectLogin[Redirigir a /login]
-    RedirectLogin --> End([Acceso denegado])
+    D --> E{Usuario autenticado?<br/>Auth::check}
     
-    IsAuthenticated -->|Sí| MiddlewareRole{Middleware: check.role}
-    MiddlewareRole --> GetRoles[Obtener roles permitidos de la ruta]
-    GetRoles --> GetUserRole[Obtener rol del usuario]
+    E -->|No autenticado| F[Redirigir a /login]
+    F --> G([Fin: Acceso denegado])
     
-    GetUserRole --> CheckRole{¿Rol en lista permitida?}
-    CheckRole -->|No| RedirectUnauth[Redirigir a /unauthorized]
-    RedirectUnauth --> End
+    E -->|Autenticado| H[Aplicar middleware: check.role con parámetros<br/>Ejemplo: check.role:librarian,admin]
+    H --> I[CheckRole->handle ejecuta]
+    I --> J[Obtener roles permitidos de la ruta<br/>roles = librarian, admin]
+    J --> K[Obtener rol del usuario actual:<br/>Auth::user->rol]
     
-    CheckRole -->|Sí| AllowAccess[Permitir acceso]
-    AllowAccess --> ExecuteController[Ejecutar controlador]
-    ExecuteController --> ReturnView[Retornar vista]
-    ReturnView --> EndSuccess([Acceso concedido])
+    K --> L{Verificar:<br/>rol del usuario está en roles permitidos?<br/>in_array rol, roles}
+    
+    L -->|No está permitido| M[Redirigir a /unauthorized]
+    M --> N([Fin: Acceso denegado])
+    
+    L -->|Permitido| O[Permitir acceso a la ruta]
+    O --> P[Ejecutar controlador:<br/>BookController->create]
+    P --> Q[Procesar lógica del controlador]
+    Q --> R[Retornar vista al usuario]
+    
+    R --> S([Fin: Acceso concedido])
 
-    style Start fill:#90EE90
-    style EndSuccess fill:#90EE90
-    style End fill:#FFB6C6
-    style AllowAccess fill:#87CEEB
+    style A fill:#90EE90,stroke:#333,stroke-width:2px
+    style S fill:#90EE90,stroke:#333,stroke-width:2px
+    style G fill:#FFB6C6,stroke:#333,stroke-width:2px
+    style N fill:#FFB6C6,stroke:#333,stroke-width:2px
+    style O fill:#87CEEB,stroke:#333,stroke-width:2px
+    style P fill:#87CEEB,stroke:#333,stroke-width:2px
 ```
 
 ---
 
-## 3. Diagramas UML
+## 3. Diagramas UML de Clases
 
-### 3.1 Diagrama de Clases (Modelos Eloquent)
+### 3.1 Diagrama de Clases - Modelos Eloquent
 
 ```mermaid
 classDiagram
@@ -330,12 +392,14 @@ classDiagram
         +string email
         +string password
         +string phone
-        +enum role
+        +string role
         +datetime email_verified_at
         +string remember_token
         +datetime deleted_at
-        +loans() HasMany
-        +activeLoans() HasMany
+        +datetime created_at
+        +datetime updated_at
+        +loans() HasMany~Loan~
+        +activeLoans() HasMany~Loan~
         +initials() string
         +isAdmin() bool
         +isLibrarian() bool
@@ -352,10 +416,12 @@ classDiagram
         +int publication_year
         +int category_id
         +int copies_available
-        +enum status
+        +string status
         +datetime deleted_at
-        +category() BelongsTo
-        +loans() HasMany
+        +datetime created_at
+        +datetime updated_at
+        +category() BelongsTo~Category~
+        +loans() HasMany~Loan~
     }
 
     class Loan {
@@ -365,584 +431,381 @@ classDiagram
         +date loan_date
         +date due_date
         +date return_date
-        +enum status
-        +user() BelongsTo
-        +book() BelongsTo
+        +string status
+        +datetime created_at
+        +datetime updated_at
+        +user() BelongsTo~User~
+        +book() BelongsTo~Book~
     }
 
     class Category {
         +int id
         +string name
         +text description
-        +books() HasMany
+        +datetime deleted_at
+        +datetime created_at
+        +datetime updated_at
+        +books() HasMany~Book~
     }
 
-    User "1" --> "*" Loan : realiza
-    Book "1" --> "*" Loan : tiene
-    Category "1" --> "*" Book : agrupa
+    User "1" --> "0..*" Loan : realiza
+    Book "1" --> "0..*" Loan : tiene
+    Category "1" --> "0..*" Book : contiene
+    
+    note for User "Trait: HasFactory, SoftDeletes\nGuard: web\nAuth: Fortify"
+    note for Book "Trait: SoftDeletes\nFillable: title, author, isbn, publication_year, category_id, copies_available, status"
+    note for Loan "Fillable: user_id, book_id, loan_date, due_date, return_date, status"
+    note for Category "Fillable: name, description"
 ```
 
-### 3.2 Diagrama de Componentes
+### 3.2 Diagrama de Clases - Controladores
 
 ```mermaid
-graph TB
-    subgraph "Capa de Presentación"
-        Views[Blade Views]
-        Livewire[Livewire Components]
-        Flux[Flux UI Components]
-    end
+classDiagram
+    class Controller {
+        <<abstract>>
+    }
 
-    subgraph "Capa de Lógica"
-        Controllers[Controllers]
-        Middleware[Middleware]
-        Requests[Form Requests]
-    end
+    class BookController {
+        +index() View
+        +create() View
+        +store(Request) RedirectResponse
+        +show(id) View
+        +edit(id) View
+        +update(Request, id) RedirectResponse
+        +destroy(id) RedirectResponse
+        +updateStatus(Request, id) RedirectResponse
+        +restore(id) RedirectResponse
+    }
 
-    subgraph "Capa de Datos"
-        Models[Eloquent Models]
-        Migrations[Migrations]
-    end
+    class LoanController {
+        +index() View
+        +create() View
+        +store(Request) RedirectResponse
+        +show(id) View
+        +return(id) RedirectResponse
+        +renew(id) RedirectResponse
+    }
 
-    subgraph "Capa de Persistencia"
-        Database[(MySQL Database)]
-    end
+    class DashboardController {
+        +index() RedirectResponse
+    }
 
-    Views --> Livewire
-    Livewire --> Flux
-    Views --> Controllers
-    Livewire --> Controllers
-    
-    Controllers --> Middleware
-    Controllers --> Requests
-    Controllers --> Models
-    
-    Models --> Database
-    Migrations --> Database
+    class LibrarianDashboardController {
+        +index() View
+    }
 
-    style Views fill:#E8F5E9
-    style Controllers fill:#E3F2FD
-    style Models fill:#FFF9C4
-    style Database fill:#FCE4EC
-```
+    Controller <|-- BookController
+    Controller <|-- LoanController
+    Controller <|-- DashboardController
+    Controller <|-- LibrarianDashboardController
 
-### 3.3 Diagrama de Paquetes
-
-```mermaid
-graph TB
-    subgraph App
-        subgraph Http
-            Controllers[Controllers/]
-            Middleware[Middleware/]
-        end
-        
-        subgraph Livewire
-            Components[Actions/]
-        end
-        
-        Models[Models/]
-        Providers[Providers/]
-    end
-
-    subgraph Resources
-        Views[views/]
-        CSS[css/]
-        JS[js/]
-    end
-
-    subgraph Database
-        Migrations[migrations/]
-        Seeders[seeders/]
-        Factories[factories/]
-    end
-
-    subgraph Routes
-        Web[web.php]
-        Console[console.php]
-    end
-
-    Controllers --> Models
-    Middleware --> Models
-    Components --> Models
-    Controllers --> Views
-    Web --> Controllers
-    Web --> Middleware
-
-    style App fill:#E8F5E9
-    style Resources fill:#E3F2FD
-    style Database fill:#FFF9C4
-    style Routes fill:#FCE4EC
+    note for BookController "Gestiona CRUD de libros\nRutas: /books/*\nMiddleware: auth, check.role:librarian,admin"
+    note for LoanController "Gestiona préstamos\nRutas: /loans/*\nMiddleware: auth, check.role:librarian,admin"
+    note for DashboardController "Redirige según rol\nRuta: /dashboard\nMiddleware: auth"
 ```
 
 ---
 
 ## 4. Diagramas de Secuencia
 
-### 4.1 Secuencia de Creación de Préstamo
+### 4.1 Secuencia: Crear Préstamo
 
 ```mermaid
 sequenceDiagram
     actor Bibliotecario
-    participant Vista as books/create.blade
+    participant Vista as loans/create.blade
+    participant Routes as web.php
+    participant Middleware as check.role
     participant Controller as LoanController
-    participant Model as Loan & Book
+    participant BookModel as Book Model
+    participant LoanModel as Loan Model
     participant DB as MySQL Database
 
     Bibliotecario->>Vista: Accede a /loans/create
-    Vista->>Controller: GET request
-    Controller->>DB: SELECT users, books WHERE copies > 0
-    DB-->>Controller: Datos de usuarios y libros
-    Controller-->>Vista: Retorna vista con datos
-    Vista-->>Bibliotecario: Muestra formulario
-
-    Bibliotecario->>Vista: Completa y envía formulario
-    Vista->>Controller: POST /loans
-    Controller->>Controller: Validar datos
+    Vista->>Routes: GET /loans/create
+    Routes->>Middleware: Verificar permisos
+    Middleware->>Middleware: ¿Rol es librarian o admin?
     
-    alt Datos inválidos
-        Controller-->>Vista: Errores de validación
-        Vista-->>Bibliotecario: Muestra errores
-    else Datos válidos
-        Controller->>Model: Verificar copies_available
-        Model->>DB: SELECT copies_available FROM books
-        DB-->>Model: copies_available = X
+    alt Permisos correctos
+        Middleware->>Controller: Permitir acceso
+        Controller->>DB: SELECT * FROM users
+        DB-->>Controller: Lista de usuarios
+        Controller->>DB: SELECT * FROM books WHERE copies_available > 0
+        DB-->>Controller: Lista de libros disponibles
+        Controller-->>Vista: Retorna vista con datos
+        Vista-->>Bibliotecario: Muestra formulario
         
-        alt Copias disponibles
-            Model-->>Controller: Copias OK
-            Controller->>DB: INSERT INTO loans
-            Controller->>DB: UPDATE books SET copies_available = X-1
-            DB-->>Controller: Préstamo creado
-            Controller-->>Vista: Redirect con success
-            Vista-->>Bibliotecario: Mensaje de éxito
+        Bibliotecario->>Vista: Selecciona usuario y libro
+        Bibliotecario->>Vista: Envía formulario
+        Vista->>Routes: POST /loans {user_id, book_id}
+        Routes->>Controller: store(Request)
+        
+        Controller->>Controller: Validar datos
+        Controller->>BookModel: findOrFail(book_id)
+        BookModel->>DB: SELECT * FROM books WHERE id = ?
+        DB-->>BookModel: Datos del libro
+        BookModel-->>Controller: Objeto Book
+        
+        Controller->>Controller: Verificar copies_available > 0
+        
+        alt Hay copias disponibles
+            Controller->>LoanModel: create([datos])
+            LoanModel->>DB: INSERT INTO loans
+            DB-->>LoanModel: Préstamo creado
+            Controller->>BookModel: decrement('copies_available')
+            BookModel->>DB: UPDATE books SET copies_available = copies_available - 1
+            DB-->>BookModel: Actualizado
+            Controller-->>Vista: Redirect /loans con success
+            Vista-->>Bibliotecario: "Préstamo creado exitosamente"
         else Sin copias
-            Model-->>Controller: Error: Sin copias
-            Controller-->>Vista: Error
-            Vista-->>Bibliotecario: Mensaje de error
+            Controller-->>Vista: Error "No hay copias disponibles"
+            Vista-->>Bibliotecario: Muestra error
         end
+    else Sin permisos
+        Middleware-->>Vista: Redirect /unauthorized
+        Vista-->>Bibliotecario: Acceso denegado
     end
 ```
 
-### 4.2 Secuencia de Autenticación
+### 4.2 Secuencia: Autenticación con Laravel Fortify
 
 ```mermaid
 sequenceDiagram
     actor Usuario
     participant Vista as login.blade
+    participant Routes as web.php
     participant Fortify as Laravel Fortify
-    participant Auth as Auth Facade
-    participant DB as Database
-    participant Session as Session Store
+    participant Auth as AuthManager
+    participant DB as MySQL Database
+    participant Session as SessionGuard
 
     Usuario->>Vista: Accede a /login
     Vista-->>Usuario: Muestra formulario
-
-    Usuario->>Vista: Ingresa email y contraseña
-    Vista->>Fortify: POST /login
-    Fortify->>Auth: Attempt login
+    
+    Usuario->>Vista: Ingresa email y password
+    Vista->>Routes: POST /login
+    Routes->>Fortify: Procesar login
+    Fortify->>Auth: attempt([email, password])
+    
     Auth->>DB: SELECT * FROM users WHERE email = ?
     DB-->>Auth: Usuario encontrado
-    
-    Auth->>Auth: Verificar password con bcrypt
+    Auth->>Auth: Hash::check(password, user.password)
     
     alt Credenciales válidas
         Auth-->>Fortify: Login exitoso
-        Fortify->>Session: Crear sesión
+        Fortify->>Session: login(user)
         Session->>DB: INSERT INTO sessions
         DB-->>Session: Sesión creada
         Session-->>Fortify: Sesión activa
-        Fortify-->>Vista: Redirect a /dashboard
-        Vista->>DashboardController: GET /dashboard
-        DashboardController->>Auth: Obtener rol de usuario
-        Auth-->>DashboardController: role = X
-        DashboardController-->>Vista: Redirect según rol
-        Vista-->>Usuario: Dashboard correspondiente
+        
+        Fortify-->>Routes: Redirect /dashboard
+        Routes->>DashboardController: index()
+        DashboardController->>Auth: user()->role
+        Auth-->>DashboardController: role = "librarian"
+        
+        alt role = admin
+            DashboardController-->>Routes: Redirect /admin/dashboard
+        else role = librarian
+            DashboardController-->>Routes: Redirect /librarian/dashboard
+        else role = member
+            DashboardController-->>Routes: Redirect /member/dashboard
+        end
+        
+        Routes-->>Vista: Dashboard correspondiente
+        Vista-->>Usuario: Muestra dashboard
     else Credenciales inválidas
         Auth-->>Fortify: Login fallido
-        Fortify-->>Vista: Error de autenticación
+        Fortify-->>Vista: Error "Las credenciales son incorrectas"
         Vista-->>Usuario: Muestra error
     end
-```
-
-### 4.3 Secuencia de Devolución con Libro Eliminado
-
-```mermaid
-sequenceDiagram
-    actor Bibliotecario
-    participant Vista as loans/index.blade
-    participant Controller as LoanController
-    participant Loan as Loan Model
-    participant Book as Book Model
-    participant DB as Database
-
-    Bibliotecario->>Vista: Click en "Devolver"
-    Vista->>Controller: PATCH /loans/{id}/return
-    
-    Controller->>Loan: with(['book' => withTrashed])
-    Loan->>DB: SELECT * FROM loans<br/>LEFT JOIN books (incluye deleted)
-    DB-->>Loan: Datos del préstamo y libro
-    Loan-->>Controller: Préstamo con libro
-
-    Controller->>Controller: Actualizar status = returned<br/>return_date = now()
-    Controller->>DB: UPDATE loans SET status, return_date
-    DB-->>Controller: Préstamo actualizado
-
-    Controller->>Book: ¿Libro existe (no eliminado)?
-    
-    alt Libro NO eliminado
-        Book-->>Controller: Libro activo
-        Controller->>DB: UPDATE books<br/>SET copies_available = copies_available + 1
-        DB-->>Controller: Inventario actualizado
-    else Libro eliminado (soft delete)
-        Book-->>Controller: Libro eliminado
-        Controller->>Controller: Skip actualizar inventario
-    end
-
-    Controller-->>Vista: Redirect con mensaje éxito
-    Vista-->>Bibliotecario: "Libro devuelto exitosamente"
 ```
 
 ---
 
 ## 5. Diagramas de Estados
 
-### 5.1 Estados de un Préstamo (Loan)
+### 5.1 Estados de un Préstamo
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Ongoing: Préstamo creado
+    [*] --> EnCurso: Préstamo creado\nloan_date = now()\ndue_date = now() + 14 días
     
-    Ongoing --> Returned: Libro devuelto<br/>(return_date = now)
-    Ongoing --> Overdue: due_date vencida<br/>sin devolución
-    Overdue --> Returned: Libro devuelto tarde
+    EnCurso --> Devuelto: Usuario devuelve libro\nreturn_date = now()\ncopies_available + 1
     
-    Ongoing --> Ongoing: Renovación<br/>(due_date + 7 días)
+    EnCurso --> Atrasado: due_date < now()\nsin devolución
     
-    Returned --> [*]: Préstamo finalizado
+    Atrasado --> Devuelto: Usuario devuelve libro tarde\nreturn_date = now()\ncopies_available + 1
+    
+    EnCurso --> EnCurso: Renovar préstamo\ndue_date = due_date + 7 días
+    
+    Devuelto --> [*]: Préstamo finalizado
 
-    note right of Ongoing
-        Estado inicial
-        loan_date = now()
-        due_date = now() + 14 días
+    note right of EnCurso
+        Estado: ongoing
+        Libro prestado activamente
+        Usuario tiene el libro
     end note
 
-    note right of Overdue
-        Estado automático
-        cuando due_date < now()
+    note right of Atrasado
+        Estado: overdue
+        Fecha límite vencida
+        Puede generar sanción
     end note
 
-    note right of Returned
-        Estado final
-        return_date registrada
-        copies_available + 1
+    note right of Devuelto
+        Estado: returned
+        Libro devuelto
+        Inventario actualizado
     end note
 ```
 
-### 5.2 Estados de un Libro (Book)
+### 5.2 Estados de un Libro
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Available: Libro creado<br/>copies_available > 0
+    [*] --> Disponible: Libro creado\nstatus = available\ncopies_available > 0
     
-    Available --> Unavailable: copies_available = 0
-    Available --> Unavailable: Status manual a unavailable
+    Disponible --> NoDisponible: Administrador cambia status\nmanualmente a unavailable
     
-    Unavailable --> Available: Devolución<br/>copies_available > 0
-    Unavailable --> Available: Status manual a available
+    Disponible --> NoDisponible: Se prestan todas las copias\ncopies_available = 0
     
-    Available --> SoftDeleted: Eliminación (soft delete)
-    Unavailable --> SoftDeleted: Eliminación (soft delete)
+    NoDisponible --> Disponible: Usuario devuelve libro\ncopies_available > 0
     
-    SoftDeleted --> Available: Restauración<br/>deleted_at = NULL
-    SoftDeleted --> Unavailable: Restauración<br/>deleted_at = NULL
+    NoDisponible --> Disponible: Administrador cambia status\nmanualmente a available
     
-    SoftDeleted --> [*]: Eliminación permanente<br/>(no implementada)
+    Disponible --> Eliminado: Soft delete\ndeleted_at = now()
+    
+    NoDisponible --> Eliminado: Soft delete\ndeleted_at = now()
+    
+    Eliminado --> Disponible: Restaurar\ndeleted_at = NULL
+    
+    Eliminado --> NoDisponible: Restaurar\ndeleted_at = NULL
 
-    note right of Available
-        Visible en consultas
-        Puede ser prestado
+    note right of Disponible
+        Visible en consultas normales
+        Se puede prestar
+        Status: available
     end note
 
-    note right of Unavailable
-        Visible en consultas
-        No puede ser prestado
+    note right of NoDisponible
+        Visible en consultas normales
+        No se puede prestar
+        Status: unavailable
     end note
 
-    note right of SoftDeleted
-        Oculto en consultas normales
-        Visible con withTrashed()
-        Préstamos existentes mantienen referencia
+    note right of Eliminado
+        No visible en consultas normales
+        Visible solo con withTrashed()
+        Préstamos anteriores mantienen referencia
+        deleted_at IS NOT NULL
     end note
 ```
 
-### 5.3 Estados de una Sesión de Usuario
+### 5.3 Ciclo de Vida de Usuario
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Unauthenticated: Usuario sin sesión
+    [*] --> Registrado: Usuario completa registro\nrol = member (default)\nemail, nombre, password
     
-    Unauthenticated --> Authenticated: Login exitoso
+    Registrado --> Activo: Login exitoso\nSesión creada en tabla sessions
     
-    Authenticated --> Active: Interacción con el sistema
-    Active --> Authenticated: Sin actividad
+    Activo --> Inactivo: Sin actividad\nlast_activity antigua
     
-    Authenticated --> Idle: Inactivo por tiempo
-    Idle --> Active: Usuario interactúa
-    Idle --> Expired: Timeout (120 min)
+    Inactivo --> Activo: Usuario interactúa\nlast_activity actualizado
     
-    Authenticated --> Unauthenticated: Logout manual
-    Active --> Unauthenticated: Logout manual
-    Idle --> Unauthenticated: Logout manual
-    Expired --> Unauthenticated: Sesión expirada
+    Inactivo --> Expirado: SESSION_LIFETIME (120 min)\nSesión expirada
+    
+    Activo --> Expirado: SESSION_LIFETIME alcanzado
+    
+    Expirado --> Registrado: Usuario debe login nuevamente
+    
+    Activo --> Suspendido: Admin desactiva cuenta\ndeleted_at = now()
+    
+    Suspendido --> Activo: Admin restaura cuenta\ndeleted_at = NULL
+    
+    Suspendido --> [*]: Eliminación permanente\n(No implementado)
 
-    note right of Authenticated
-        Sesión creada en DB
-        Rol verificado
-        Acceso a rutas protegidas
+    note right of Activo
+        Usuario autenticado
+        Puede acceder según rol
+        Sesión válida
     end note
 
-    note right of Expired
-        SESSION_LIFETIME = 120 min
-        Usuario debe autenticarse nuevamente
-    end note
-```
-
-### 5.4 Ciclo de Vida de un Usuario
-
-```mermaid
-stateDiagram-v2
-    [*] --> Registered: Registro completado
-    
-    Registered --> Active: Email verificado (opcional)
-    Registered --> Active: Login exitoso
-    
-    Active --> Suspended: Admin desactiva cuenta<br/>(soft delete)
-    Suspended --> Active: Admin reactiva cuenta<br/>(restore)
-    
-    Active --> Deleted: Eliminación de cuenta<br/>(soft delete)
-    Suspended --> Deleted: Eliminación permanente
-    
-    Deleted --> Active: Restauración de cuenta
-    
-    Deleted --> [*]: Eliminación definitiva<br/>(no implementada)
-
-    note right of Registered
-        role = member (default)
-        deleted_at = NULL
-    end note
-
-    note right of Active
-        Puede acceder al sistema
-        Puede realizar préstamos
-    end note
-
-    note right of Suspended
-        deleted_at != NULL
+    note right of Suspendido
+        deleted_at IS NOT NULL
         No puede autenticarse
+        Cuenta desactivada
     end note
 ```
 
 ---
 
-## 6. Diagrama de Arquitectura de Alto Nivel
+## 6. Leyenda de Colores y Símbolos
+
+### 6.1 Colores en Diagramas de Flujo
+
+| Color | Código | Significado |
+|-------|--------|-------------|
+| 🟢 Verde claro | `#90EE90` | Inicio / Fin de proceso |
+| 🔵 Azul claro | `#87CEEB` | Operación / Proceso / Acción |
+| 🔴 Rosa | `#FFB6C6` | Error / Fallo / Excepción |
+| 🟡 Amarillo claro | `#FFE4B5` | Espera / Decisión / Advertencia |
+
+### 6.2 Símbolos de Diagramas de Flujo
 
 ```mermaid
-graph TB
-    subgraph Cliente
-        Browser[Navegador Web]
-    end
+flowchart LR
+    A([Inicio/Fin])
+    B[Proceso]
+    C{{Decisión}}
+    D[(Base de Datos)]
+    E[/Entrada-Salida/]
 
-    subgraph "Servidor Web"
-        Nginx[Nginx / Apache]
-    end
-
-    subgraph "Aplicación Laravel"
-        Router[Router<br/>web.php]
-        
-        subgraph Middleware
-            Auth[Auth Middleware]
-            CheckRole[CheckRole Middleware]
-            CSRF[CSRF Protection]
-        end
-        
-        subgraph Controllers
-            BookCtrl[BookController]
-            LoanCtrl[LoanController]
-            DashCtrl[DashboardController]
-        end
-        
-        subgraph Models
-            User[User Model]
-            Book[Book Model]
-            Loan[Loan Model]
-        end
-        
-        subgraph Views
-            Blade[Blade Templates]
-            Livewire[Livewire Components]
-        end
-    end
-
-    subgraph "Base de Datos"
-        MySQL[(MySQL 8.0)]
-    end
-
-    subgraph "Assets"
-        Vite[Vite Build]
-        Tailwind[Tailwind CSS]
-    end
-
-    Browser -->|HTTP Request| Nginx
-    Nginx -->|Forward| Router
-    Router --> Middleware
-    Middleware --> Controllers
-    Controllers --> Models
-    Models -->|Eloquent ORM| MySQL
-    MySQL -->|Datos| Models
-    Models --> Controllers
-    Controllers --> Views
-    Views -->|Compiled HTML| Nginx
-    Nginx -->|HTTP Response| Browser
-    
-    Vite --> Views
-    Tailwind --> Views
-
-    style Browser fill:#E8F5E9
-    style Nginx fill:#E3F2FD
-    style Controllers fill:#FFF9C4
-    style MySQL fill:#FCE4EC
+    style A fill:#90EE90,stroke:#333,stroke-width:2px
+    style B fill:#87CEEB,stroke:#333,stroke-width:2px
+    style C fill:#FFE4B5,stroke:#333,stroke-width:2px
+    style D fill:#FCE4EC,stroke:#333,stroke-width:2px
+    style E fill:#E8F5E9,stroke:#333,stroke-width:2px
 ```
 
 ---
 
-## 7. Diagrama de Despliegue
+## 7. Notas Técnicas
 
-```mermaid
-graph TB
-    subgraph "Entorno de Desarrollo"
-        DevMachine[Máquina Local]
-        DevServer[php artisan serve<br/>Puerto 8000]
-        DevDB[(MySQL Local<br/>Puerto 3306)]
-        DevNode[npm run dev<br/>Vite Server]
-        
-        DevMachine --> DevServer
-        DevMachine --> DevNode
-        DevServer --> DevDB
-    end
+### 7.1 Cómo Ver los Diagramas
 
-    subgraph "Entorno de Producción"
-        LoadBalancer[Load Balancer]
-        
-        subgraph "Servidor Web"
-            Nginx2[Nginx]
-            PHP[PHP-FPM 8.2]
-            Laravel[Laravel App]
-        end
-        
-        subgraph "Base de Datos"
-            ProdDB[(MySQL 8.0<br/>Master)]
-            Replica[(MySQL Replica<br/>Read Only)]
-        end
-        
-        subgraph "Almacenamiento"
-            Storage[File Storage<br/>Logs, Sessions]
-        end
-        
-        LoadBalancer --> Nginx2
-        Nginx2 --> PHP
-        PHP --> Laravel
-        Laravel --> ProdDB
-        Laravel --> Replica
-        Laravel --> Storage
-        ProdDB -.Replicación.-> Replica
-    end
+Los diagramas en este archivo usan **sintaxis Mermaid** que GitHub renderiza automáticamente como imágenes cuando ves el archivo en el repositorio.
 
-    Internet((Internet)) --> LoadBalancer
-    DevMachine -.Deploy.-> LoadBalancer
+**Para verlos correctamente:**
+1. Abre este archivo en GitHub (no en editor local)
+2. Los diagramas se renderizarán como gráficos visuales
+3. Si no se ven, actualiza la página
 
-    style Internet fill:#E8F5E9
-    style LoadBalancer fill:#E3F2FD
-    style Laravel fill:#FFF9C4
-    style ProdDB fill:#FCE4EC
-```
+**Editores compatibles:**
+- GitHub (renderizado automático)
+- Visual Studio Code (con extensión Markdown Preview Mermaid Support)
+- GitLab
+- Notion
+- Obsidian
 
----
+### 7.2 Información Verificada
 
-## 8. Diagrama de Casos de Uso
+Todos los diagramas en este documento están basados en:
+- Código real del repositorio BiblioTech rama `dev`
+- Migraciones de base de datos existentes
+- Modelos Eloquent implementados
+- Controladores actuales
+- Rutas definidas en `routes/web.php`
 
-```mermaid
-graph TB
-    subgraph Sistema BiblioTech
-        UC1[Gestionar Libros]
-        UC2[Gestionar Préstamos]
-        UC3[Gestionar Usuarios]
-        UC4[Ver Estadísticas]
-        UC5[Buscar Libros]
-        UC6[Ver Mis Préstamos]
-        UC7[Renovar Préstamo]
-        UC8[Devolver Libro]
-    end
-
-    Admin((Administrador))
-    Librarian((Bibliotecario))
-    Member((Miembro))
-
-    Admin --> UC1
-    Admin --> UC2
-    Admin --> UC3
-    Admin --> UC4
-    Admin --> UC5
-
-    Librarian --> UC1
-    Librarian --> UC2
-    Librarian --> UC4
-    Librarian --> UC5
-    Librarian --> UC8
-
-    Member --> UC5
-    Member --> UC6
-    Member --> UC7
-
-    UC2 -.include.-> UC8
-    UC2 -.include.-> UC7
-
-    style Admin fill:#FFB6C6
-    style Librarian fill:#87CEEB
-    style Member fill:#90EE90
-```
-
----
-
-## 9. Leyenda de Colores
-
-```mermaid
-graph LR
-    Start([Inicio/Fin]) 
-    Process[Proceso]
-    Decision{Decisión}
-    Error[Error]
-    Success[Estado exitoso]
-    Database[(Base de Datos)]
-
-    style Start fill:#90EE90
-    style Process fill:#87CEEB
-    style Decision fill:#FFE4B5
-    style Error fill:#FFB6C6
-    style Success fill:#E8F5E9
-    style Database fill:#FCE4EC
-```
-
-| Color | Significado | Uso |
-|-------|-------------|-----|
-| 🟢 Verde claro | Inicio/Fin | Nodos de inicio y terminación |
-| 🔵 Azul claro | Proceso/Acción | Operaciones y transformaciones |
-| 🟡 Amarillo claro | Decisión | Puntos de bifurcación |
-| 🔴 Rosa | Error | Estados de error o fallo |
-| 🟣 Verde pálido | Éxito | Estados exitosos |
-| 🟪 Morado claro | Base de Datos | Operaciones de persistencia |
+**No hay información inventada o supuesta.**
 
 ---
 
 <div align="center">
   <p><strong>Diagramas BiblioTech v1.0</strong></p>
-  <p>Todos los diagramas se renderizan automáticamente en GitHub</p>
+  <p>Todos los diagramas representan el estado actual del sistema</p>
+  <p>Basado en código real de la rama dev</p>
   <p>© 2024 - Guillen Cristofer</p>
+  <p>Generado: Diciembre 2024</p>
 </div>

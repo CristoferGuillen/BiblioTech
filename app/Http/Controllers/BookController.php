@@ -12,8 +12,11 @@ class BookController extends Controller
 {
     public function index()
     {
-        $books = Book::paginate(15);
-        return view('books.index', compact('books'));
+    $books = Book::withTrashed('category')
+        ->orderBy('created_at', 'desc')
+        ->paginate(15);
+    
+    return view('books.index', compact('books'));
     }
 
     public function create()
@@ -27,13 +30,21 @@ class BookController extends Controller
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
             'isbn' => 'required|string|max:13|unique:books',
-            'published_year' => 'required|integer|min:1000|max:' . date('Y'),
+            'publication_year' => 'required|integer|min:1000|max:' . date('Y'),
             'category_id' => 'nullable|exists:categories,id',
             'copies_available' => 'required|integer|min:0',
             'status' => 'required|in:available,unavailable',
         ]);
 
-        $book = Book::create($validatedData);
+        Book::create([
+        'title' => $validatedData['title'],
+        'author' => $validatedData['author'],
+        'isbn' => $validatedData['isbn'],
+        'category_id' => $validatedData['category_id'],
+        'copies_available' => $validatedData['copies_available'],
+        'publication_year' => $validatedData['publication_year'],   // ← ESTA LÍNEA
+        'status' => $validatedData['status'],
+    ]);
         return redirect()->route('books.index')->with('success', 'Libro creado exitosamente.');
     }
 
@@ -46,7 +57,7 @@ class BookController extends Controller
     {
         $book = Book::findOrFail($id);
         $categories = Category::all();
-        return view('books.edit', compact('book'));
+       return view('books.edit', compact('book', 'categories')); 
 
     }
 
@@ -58,7 +69,7 @@ class BookController extends Controller
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
             'isbn' => 'required|string|max:13|unique:books,isbn,' . $id,
-            'published_year' => 'required|integer|min:1000|max:' . date('Y'),
+            'publication_year' => 'required|integer|min:1000|max:' . date('Y'),
             'category_id' => 'nullable|exists:categories,id',
             'copies_available' => 'required|integer|min:0',
             'status' => 'required|in:available,unavailable',
@@ -92,6 +103,7 @@ class BookController extends Controller
     {
         $book = Book::withTrashed()->findOrFail($id);
         $book->restore();
-        return redirect()->route('books.index')->with('success', 'Libro restaurado exitosamente.');
-    }
+    
+    return redirect()->route('books.index')
+        ->with('success', 'Libro restaurado exitosamente.');    }
 }

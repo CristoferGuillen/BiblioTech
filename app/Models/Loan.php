@@ -12,14 +12,21 @@ class Loan extends Model
         'loan_date',
         'due_date',
         'return_date',
+        'status',
     ];
 
     protected $casts = [
-        'loan_date' => 'date',
-        'due_date' => 'date',
-        'return_date' => 'date',
+        'loan_date' => 'datetime',
+        'due_date' => 'datetime',
+        'return_date' => 'datetime',
     ];
-    public function user(){
-        return $this->belongsTo(User::class, 'user_id');
+    public function book()
+    {
+        return $this->belongsTo(Book::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

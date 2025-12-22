@@ -1,0 +1,53 @@
+/* Animaciones personalizadas */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.slide-in {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Hover effects */
+.hover-scale {
+    transition: transform 0.2s ease;
+}
+
+.hover-scale:hover {
+    transform: scale(1.05);
+}
+
+/* Loading spinner */
+.spinner {
+    border: 3px solid #F5F6F8;
+    border-top: 3px solid #FD583B;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Pulse animation */
+.pulse-accent {
+    animation: pulse-accent 2s infinite;
+}
+
+@keyframes pulse-accent {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(253, 88, 59, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(253, 88, 59, 0);
+    }
+}

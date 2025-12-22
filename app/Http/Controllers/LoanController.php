@@ -12,7 +12,9 @@ class LoanController extends Controller
 {
     public function index()
     {
-        $loans = Loan::with('user', 'book')
+        $loans = Loan::with(['user', 'book' => function ($query) {
+            $query->withTrashed();
+        }])
         ->orderBy('created_at', 'desc')
         ->paginate(15);
         return view('loans.index', compact('loans'));
@@ -41,7 +43,7 @@ class LoanController extends Controller
         Loan::create(array_merge($validatedData, [
             'loan_date' => now(),
             'due_date' => now()->addDays(14),
-            'status' => 'active',
+            'status' => 'ongoing',
         ]));
         $book->decrement('copies_available');
 
@@ -49,29 +51,49 @@ class LoanController extends Controller
     }
     public function show ($id)
     {
-       $loan = Loan::with('user', 'book')->findOrFail($id);
+        $loan = Loan::with(['user', 'book' => function ($query) {
+            $query->withTrashed();
+        }])
+        ->findOrFail($id);
         return view('loans.show', compact('loan'));
     }
 
     public function return($id)
     {
-        $loan = Loan::findOrFail($id);
-        $loan->update([
-            'return_date' => now(),
-            'status' => 'returned',
-        ]);
-        $loan->book->increment('copies_available');
-        return redirect()->route('loans.index')->with('success', 'Libro devuelto exitosamente.');
+        $loan = Loan::with(['book' => function ($q) {
+            $q->withTrashed(); 
+        }])->findOrFail($id);
+
+        $loan->status = 'returned';
+        $loan->return_date = now();
+        $loan->save();
+
+        if ($loan->book) {
+            $loan->book->increment('copies_available');
+        }
+
+        return redirect()->route('loans.index')
+            ->with('success', 'Libro devuelto exitosamente.');
     }
 
-    public function renew ($id)
+    public function renew($id)
     {
-        $loan = Loan::findOrFail($id);
+        $loan = Loan::with(['book' => function ($query) {
+                $query->withTrashed();
+            }])
+            ->findOrFail($id);
+        
+        if (!$loan->book) {
+            return redirect()->route('loans.index')
+                ->with('error', 'No se puede renovar: el libro ha sido eliminado.');
+        }
+        
         $loan->due_date = $loan->due_date->addDays(7);
         $loan->save();
 
         return redirect()->route('loans.index')->with('success', 'Préstamo renovado exitosamente.');
     }
+
 
 
 }

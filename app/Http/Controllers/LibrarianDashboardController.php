@@ -25,7 +25,7 @@ class LibrarianDashboardController extends Controller
         //Libros
         $totalBooks = Book::count();
         $availableBooks = Book::where('status', 'available')->count();
-        $unvailableBooks = Book::where('status', 'unavailable')->count();
+        $unavailableBooks = Book::where('status', 'unavailableBooks')->count();
         
 
         $rolTransletion = [
@@ -41,10 +41,10 @@ class LibrarianDashboardController extends Controller
             'unvailable' => 'No disponible',
             'available' => 'Disponible',
         ];
-        return view('dashboard.librarian',[
+        return view('librarian.dashboard', [
             'totalBooks' => $totalBooks,
             'availableBooks' => $availableBooks,
-            'unvailableBooks' => $unvailableBooks,
+            'unavailableBooks' => $unavailableBooks,
             'totalLoans' => $totalLoans,
             'ongoingLoans' => $ongoingLoans,
             'overdueLoans' => $overdueLoans,

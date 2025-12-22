@@ -15,13 +15,15 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
        
-        if ($user->role === 'member') {
-            return view('dashboard.member');
-        } elseif ($user->role === 'librarian') {
-            return view('dashboard.librarian');
-        } elseif ($user->role === 'admin') {
-            return view('dashboard.admin');
-        } 
-         return redirect()->route('login');
+        switch ($user->role) {
+            case 'admin':
+                return redirect()->route('admin.dashboard');
+            case 'librarian':
+                return redirect()->route('librarian.dashboard');
+            case 'member':
+                return redirect()->route('member.dashboard');
+            default:
+                return redirect()->route('unauthorized');
+        }
     }
 }

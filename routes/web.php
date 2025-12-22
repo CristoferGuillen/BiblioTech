@@ -72,7 +72,6 @@ Route::middleware(['auth', 'check.role:librarian,admin'])->group(function () {
     
     Route::patch('/books/{id}/copies', [BookController::class, 'updateCopies'])
         ->name('books.updateCopies');
-    
     Route::patch('/books/{id}/restore', [BookController::class, 'restore'])
         ->name('books.restore');
     

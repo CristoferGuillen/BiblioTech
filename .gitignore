@@ -1,0 +1,99 @@
+# Laravel específicos
+/vendor/
+/node_modules/
+/public/hot
+/public/storage
+/storage/*.key
+
+# Variables de entorno
+.env
+.env.backup
+.env.production
+
+# Homestead / Vagrant
+Homestead.yaml
+Homestead.json
+/.vagrant
+
+# Laravel IDE Helper
+_ide_helper.php
+_ide_helper_models.php
+.phpstorm.meta.php
+
+# Testing y debugging
+.phpunit.result.cache
+/phpunit.xml
+/coverage
+/.phpunit.cache
+Homestead.yaml
+Homestead.json
+
+# Build files (Vite/Laravel Mix)
+/public/build
+/public/hot
+/public/mix-manifest.json
+/public/css
+/public/js
+
+# Logs y cache
+npm-debug.log
+yarn-error.log
+/storage/logs/*.log
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/pail
+
+# Composer
+auth.json
+composer.lock
+vendor/
+
+# NPM / Yarn
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# IDEs y Editores
+/.idea
+/.vscode
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.sublime-project
+*.sublime-workspace
+.phpactor.json
+
+# OS específicos
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Archivos de base de datos
+*.sqlite
+*.sqlite-journal
+*.sql
+
+# Backups
+*.bak
+*.orig
+*.tmp
+
+# Documentación temporal (si no quieres versionar PDFs temporales)
+# *.pdf
+# /docs/temp/
+
+# Archivos de configuración local
+php_cs.cache
+.php_cs.cache
+.phpcs-cache
+.php-cs-fixer.cache

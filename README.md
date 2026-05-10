@@ -1,508 +1,577 @@
-# 📚 BiblioTech
+# BiblioTech
 
-[![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=flat&logo=laravel)](https://laravel.com)
-[![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=flat&logo=php)](https://php.net)
-[![Livewire](https://img.shields.io/badge/Livewire-3.x-4E56A6?style=flat&logo=livewire)](https://livewire.laravel.com)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+![PHP](https://img.shields.io/badge/PHP-8.2%2B-777BB4?style=flat-square&logo=php&logoColor=white)
+![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?style=flat-square&logo=laravel&logoColor=white)
+![Livewire](https://img.shields.io/badge/Livewire-3-4E56A6?style=flat-square&logo=livewire&logoColor=white)
+![Flux UI](https://img.shields.io/badge/Flux_UI-2.9-111827?style=flat-square)
+![MySQL](https://img.shields.io/badge/MySQL-8.0%2B-4479A1?style=flat-square&logo=mysql&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?style=flat-square&logo=tailwindcss&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=flat-square&logo=vite&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 
-Sistema de Gestión de Biblioteca Full-Stack desarrollado con Laravel 12, Livewire y Flux UI.
+<p align="center">
+  <a href="https://skillicons.dev">
+    <img src="https://skillicons.dev/icons?i=php,laravel,mysql,tailwind,vite,js,git&theme=light" alt="Tecnologías utilizadas en BiblioTech" />
+  </a>
+</p>
 
----
+**BiblioTech** es una aplicación web full-stack para la gestión de bibliotecas. El sistema permite administrar libros, categorías, usuarios, préstamos, devoluciones y renovaciones desde una plataforma construida con **Laravel**, **Livewire**, **Flux UI**, **Blade**, **Tailwind CSS** y **MySQL**.
 
-## 📋 Tabla de Contenidos
+El proyecto está diseñado para digitalizar procesos comunes de una biblioteca, centralizando el catálogo de libros, el control de copias disponibles, el registro de préstamos y la separación de funcionalidades por roles.
 
-- [Descripción](#-descripción)
-- [Características](#-características)
-- [Tecnologías](#-tecnologías)
-- [Requisitos Previos](#-requisitos-previos)
-- [Instalación](#-instalación)
-- [Configuración](#️-configuración)
-- [Uso](#-uso)
-- [Roles y Permisos](#-roles-y-permisos)
-- [Estructura del Proyecto](#-estructura-del-proyecto)
-- [Estado del Desarrollo](#-estado-del-desarrollo)
-- [Roadmap](#-roadmap)
-- [Contribución](#-contribución)
-- [Licencia](#-licencia)
-- [Contacto](#-contacto)
+> Nota: La interfaz de la aplicación está actualmente en español, ya que el proyecto está orientado a entornos bibliotecarios hispanohablantes.
 
----
+## Tabla de Contenidos
 
-## 📖 Descripción
+- [Tecnologías](#tecnologías)
+- [Descripción General](#descripción-general)
+- [Características Principales](#características-principales)
+- [Roles del Sistema](#roles-del-sistema)
+- [Modelo de Dominio](#modelo-de-dominio)
+- [Requisitos Previos](#requisitos-previos)
+- [Instalación](#instalación)
+- [Configuración](#configuración)
+- [Base de Datos](#base-de-datos)
+- [Ejecución Local](#ejecución-local)
+- [Credenciales de Prueba](#credenciales-de-prueba)
+- [Comandos Útiles](#comandos-útiles)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Documentación Técnica](#documentación-técnica)
+- [Autor](#autor)
+- [Licencia](#licencia)
 
-**BiblioTech** es una aplicación web completa para la gestión integral de bibliotecas. Permite administrar el catálogo de libros, gestionar usuarios con diferentes roles, controlar préstamos y devoluciones mediante una interfaz web moderna, reactiva e intuitiva.
+## Tecnologías
 
-El sistema implementa autenticación con sesiones de Laravel, sistema de roles granular (Admin, Bibliotecario, Miembro), middleware personalizado para control de acceso, y Livewire para componentes reactivos sin necesidad de JavaScript adicional.
+- **PHP 8.2+**
+- **Laravel 12**
+- **Laravel Fortify**
+- **Laravel Sanctum**
+- **Livewire 3**
+- **Livewire Volt**
+- **Flux UI**
+- **Blade**
+- **Tailwind CSS 4**
+- **Vite 7**
+- **MySQL 8.0+**
+- **Eloquent ORM**
+- **Composer**
+- **npm**
 
-### Contexto del Proyecto
+## Descripción General
 
-Este proyecto nació como una API RESTful de aprendizaje en Laravel y ha evolucionado hacia una aplicación web full-stack completa, aplicando las mejores prácticas y patrones modernos de desarrollo Laravel.
+BiblioTech fue desarrollado como una solución web para apoyar la gestión diaria de una biblioteca. Su objetivo es reemplazar procesos manuales o dispersos por una plataforma centralizada, organizada y accesible desde el navegador.
 
----
+La aplicación incluye autenticación, control de acceso basado en roles, gestión de libros, relación con categorías, administración de préstamos, devolución de libros, renovación de préstamos, soft deletes para mantener trazabilidad y dashboards adaptados al tipo de usuario.
 
-## ✨ Características
+El sistema sigue la arquitectura **MVC** de Laravel, separando la lógica de negocio en controladores, la persistencia de datos en modelos Eloquent y la presentación en vistas Blade con componentes Livewire y Flux UI.
 
-### Módulos Implementados ✅
+## Características Principales
 
-- **🔐 Autenticación y Autorización**
-  - Registro e inicio de sesión con Laravel Fortify
-  - Sistema de roles: Admin, Librarian, Member
-  - Middleware personalizado de control de acceso
-  - Protección CSRF en formularios
+### Autenticación y autorización
 
-- **📚 Gestión de Libros**
-  - CRUD completo con validación robusta
-  - Soft deletes y restauración de libros eliminados
-  - Actualización de estado (disponible/no disponible)
-  - Gestión de copias disponibles
-  - Paginación de 15 registros por página
-  - Relación con categorías
+- Registro e inicio de sesión de usuarios.
+- Autenticación basada en sesiones de Laravel.
+- Integración con Laravel Fortify.
+- Control de acceso basado en roles.
+- Middleware personalizado `CheckRole`.
+- Redirección de usuarios según su rol.
+- Rutas protegidas para usuarios autenticados.
+- Vista de acceso no autorizado.
 
-- **👥 Gestión de Usuarios**
-  - Perfiles de usuario editables
-  - Soft deletes para auditoría
-  - Métodos helper para verificación de roles
-  - Historial de préstamos por usuario
+### Gestión de usuarios
 
-- **📖 Gestión de Préstamos**
-  - Registro de préstamos con validaciones
-  - Verificación de disponibilidad automática
-  - Cálculo de fecha de devolución (14 días)
-  - Devolución con actualización de inventario
-  - Renovación de préstamos (extensión de 7 días)
-  - Manejo inteligente de libros eliminados
+- Registro de usuarios del sistema.
+- Roles disponibles:
+  - Administrador.
+  - Bibliotecario.
+  - Miembro.
+- Campo de teléfono opcional.
+- Soft deletes para mantener trazabilidad.
+- Métodos auxiliares para validar roles.
+- Relación entre usuarios y préstamos.
+- Historial de préstamos por usuario.
 
-- **📊 Dashboards por Rol**
-  - Dashboard general con redirección automática
-  - Dashboard de bibliotecario con estadísticas
-  - Dashboards específicos para cada rol
+### Gestión de libros
 
-- **🎨 Interfaz de Usuario**
-  - Diseño responsive con Tailwind CSS
-  - Componentes Flux UI
-  - Vistas Blade organizadas por módulo
-  - Componentes Livewire reactivos
+- Registro de libros.
+- Edición de información bibliográfica.
+- Visualización de detalle de libros.
+- Eliminación lógica mediante soft deletes.
+- Restauración de libros eliminados.
+- Validación de ISBN único.
+- Gestión de título, autor, año de publicación, categoría, copias disponibles y estado.
+- Estados de libro:
+  - Disponible.
+  - No disponible.
+- Paginación de registros.
+- Relación entre libros y categorías.
+- Manejo de libros eliminados dentro del historial de préstamos.
 
-### Características Técnicas
+### Gestión de categorías
 
-- ✅ Paginación en todos los listados
-- ✅ Validación de datos con reglas de Laravel
-- ✅ Eager loading para optimización de consultas
-- ✅ Soft deletes en modelos críticos
-- ✅ Mensajes flash de éxito/error
-- ✅ Manejo estructurado de errores
+- Modelo de categorías para clasificar libros.
+- Nombre único por categoría.
+- Descripción opcional.
+- Relación entre categoría y libros.
+- Base estructural para organizar el catálogo bibliográfico.
 
----
+### Gestión de préstamos
 
-## 🛠 Tecnologías
+- Registro de préstamos de libros.
+- Asociación entre préstamo, usuario y libro.
+- Validación de disponibilidad antes de crear un préstamo.
+- Disminución automática de copias disponibles al prestar un libro.
+- Fecha de préstamo.
+- Fecha estimada de devolución.
+- Estados de préstamo:
+  - En curso.
+  - Devuelto.
+  - Atrasado.
+- Registro de devolución.
+- Incremento automático de copias disponibles al devolver un libro.
+- Renovación de préstamos por 7 días adicionales.
+- Manejo de préstamos asociados a libros eliminados lógicamente.
 
-### Backend
-- **Laravel Framework** 12.x
-- **PHP** 8.2+
-- **MySQL** 8.0
+### Dashboard de bibliotecario
 
-### Frontend
-- **Livewire** 3.x
-- **Volt** 1.7+
-- **Flux UI** 2.9+
-- **Tailwind CSS**
-- **Alpine.js** (incluido con Livewire)
+- Vista personalizada para bibliotecarios.
+- Total de libros registrados.
+- Total de préstamos.
+- Conteo de préstamos en curso.
+- Conteo de préstamos atrasados.
+- Conteo de libros disponibles.
+- Conteo de libros no disponibles.
+- Traducciones de roles y estados para mostrar información en español.
+- Acceso rápido a la gestión operativa de la biblioteca.
 
-### Autenticación & Seguridad
-- **Laravel Fortify** 1.30+
-- **Laravel Sanctum** 4.2+
-- Sesiones de Laravel
-- Middleware personalizado
+### Panel administrativo
 
-### Herramientas de Desarrollo
-- **Laravel Pint** (Code Style)
-- **Laravel Sail** (Docker environment)
-- **Laravel Pail** (Log viewer)
-- **PHPUnit** (Testing)
+- Ruta base para dashboard de administrador.
+- Ruta base para gestión de usuarios.
+- Ruta base para configuración del sistema.
+- Ruta base para reportes.
+- Separación de acceso para usuarios con rol administrador.
+- Base preparada para extender funcionalidades administrativas.
 
----
+### Panel de miembro
 
-## 📦 Requisitos Previos
+- Ruta base para dashboard de miembro.
+- Ruta base para consulta de préstamos personales.
+- Ruta base para futuras reservaciones.
+- Separación de acceso para usuarios con rol miembro.
 
-Antes de instalar, asegúrate de tener:
+### Seguridad y validaciones
 
-- **PHP** >= 8.2
-- **Composer** >= 2.0
-- **Node.js** >= 18.x y **npm** >= 9.x
-- **MySQL** >= 8.0 o **MariaDB** >= 10.3
-- **Git**
+- Protección CSRF en formularios.
+- Hashing automático de contraseñas.
+- Prevención de SQL Injection mediante Eloquent ORM.
+- Escapado automático de datos en vistas Blade.
+- Middleware de autorización por roles.
+- Validación de campos obligatorios.
+- Validación de ISBN único.
+- Validación de años de publicación.
+- Validación de existencia de usuarios y libros antes de crear préstamos.
+- Restricción de acciones según rol.
 
-### Extensiones PHP Requeridas
+## Roles del Sistema
 
-```bash
-php -m | grep -E 'pdo|mbstring|openssl|tokenizer|xml|ctype|json|bcmath'
+BiblioTech utiliza roles para separar responsabilidades y permisos dentro de la aplicación.
+
+| Rol | Descripción |
+| --- | --- |
+| `admin` | Tiene acceso a las rutas administrativas, configuración, usuarios y reportes. |
+| `librarian` | Puede gestionar libros, préstamos, devoluciones, renovaciones y el dashboard operativo. |
+| `member` | Puede acceder a su dashboard personal, consultar sus préstamos y futuras reservaciones. |
+
+## Modelo de Dominio
+
+El sistema está organizado alrededor de las principales entidades de una biblioteca.
+
+| Entidad | Propósito |
+| --- | --- |
+| `User` | Representa a los usuarios del sistema, sus datos de autenticación, rol y préstamos. |
+| `Book` | Representa los libros del catálogo bibliográfico. |
+| `Category` | Clasifica los libros por tipo, tema o área. |
+| `Loan` | Representa un préstamo de un libro a un usuario. |
+
+### Relaciones principales
+
+- Un `User` puede tener muchos `Loan`.
+- Un `Book` pertenece a una `Category`.
+- Una `Category` puede tener muchos `Book`.
+- Un `Book` puede estar asociado a muchos `Loan`.
+- Un `Loan` pertenece a un `User`.
+- Un `Loan` pertenece a un `Book`.
+
+## Requisitos Previos
+
+Antes de instalar el proyecto, asegúrate de tener instalado:
+
+- PHP 8.2 o superior.
+- Composer.
+- MySQL 8.0 o superior.
+- Node.js 18 o superior.
+- npm.
+- Git.
+
+Extensiones PHP recomendadas para ejecutar Laravel con MySQL:
+
+```ini
+extension=bcmath
+extension=ctype
+extension=curl
+extension=fileinfo
+extension=json
+extension=mbstring
+extension=openssl
+extension=pdo_mysql
+extension=tokenizer
+extension=xml
+extension=zip
 ```
 
----
+## Instalación
 
-## 🚀 Instalación
-
-### 1. Clonar el Repositorio
+Clona el repositorio:
 
 ```bash
-git clone https://github.com/guillencristofer911-star/BiblioTech.git
+git clone https://github.com/CristoferGuillen/BiblioTech.git
+```
+
+Entra a la carpeta del proyecto:
+
+```bash
 cd BiblioTech
 ```
 
-### 2. Cambiar a la Rama de Desarrollo
+Instala las dependencias de PHP:
 
 ```bash
-git checkout dev
+composer install
 ```
 
-### 3. Instalar Dependencias
+Instala las dependencias de JavaScript:
 
 ```bash
-# Dependencias de PHP
-composer install
-
-# Dependencias de Node.js
 npm install
 ```
 
-### 4. Configurar Variables de Entorno
+Copia el archivo de entorno:
 
 ```bash
-# Copiar archivo de ejemplo
 cp .env.example .env
+```
 
-# Generar clave de aplicación
+En Windows PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Genera la clave de la aplicación:
+
+```bash
 php artisan key:generate
 ```
 
-### 5. Configurar Base de Datos
+## Configuración
 
-Edita el archivo `.env` con tus credenciales de base de datos:
+Edita el archivo `.env` y configura los valores principales de la aplicación:
+
+```env
+APP_NAME=BiblioTech
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+```
+
+Configura la conexión a MySQL:
 
 ```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=bibliotech
-DB_USERNAME=tu_usuario
-DB_PASSWORD=tu_contraseña
+DB_USERNAME=root
+DB_PASSWORD=your_password
 ```
 
-### 6. Ejecutar Migraciones
-
-```bash
-php artisan migrate
-```
-
-### 7. (Opcional) Ejecutar Seeders
-
-```bash
-# Cuando estén disponibles
-php artisan db:seed
-```
-
-### 8. Compilar Assets
-
-```bash
-# Desarrollo
-npm run dev
-
-# Producción
-npm run build
-```
-
-### 9. Iniciar Servidor de Desarrollo
-
-```bash
-php artisan serve
-```
-
-La aplicación estará disponible en: [http://localhost:8000](http://localhost:8000)
-
----
-
-## ⚙️ Configuración
-
-### Configuración de Sesiones
-
-El proyecto utiliza sesiones de Laravel. Asegúrate de configurar correctamente:
+Configura las sesiones:
 
 ```env
 SESSION_DRIVER=database
 SESSION_LIFETIME=120
 ```
 
-### Configuración de Livewire
+Crea una base de datos llamada `bibliotech` antes de ejecutar las migraciones.
 
-En `config/livewire.php` puedes personalizar:
+Puedes crearla desde MySQL con:
 
-- Layout de la aplicación
-- Ruta de assets
-- Middleware aplicado
-
----
-
-## 💻 Uso
-
-### Acceso al Sistema
-
-1. Visita `http://localhost:8000`
-2. Regístrate como nuevo usuario
-3. Un administrador debe asignar tu rol
-
-### Roles Disponibles
-
-| Rol | Descripción | Permisos |
-|-----|-------------|----------|
-| **Admin** | Administrador del sistema | Acceso total: gestión de usuarios, configuración, reportes |
-| **Librarian** | Bibliotecario | Gestión de libros y préstamos |
-| **Member** | Usuario regular | Ver catálogo, solicitar préstamos |
-
-### Funcionalidades Principales
-
-#### Para Bibliotecarios y Administradores
-
-**Gestión de Libros:**
-```
-/books          - Listar todos los libros
-/books/create   - Crear nuevo libro
-/books/{id}     - Ver detalle de libro
-/books/{id}/edit - Editar libro
+```sql
+CREATE DATABASE bibliotech CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-**Gestión de Préstamos:**
-```
-/loans          - Listar todos los préstamos
-/loans/create   - Crear nuevo préstamo
-/loans/{id}     - Ver detalle de préstamo
-```
+## Base de Datos
 
-**Acciones Especiales:**
-- Restaurar libros eliminados
-- Actualizar estado de disponibilidad
-- Renovar préstamos (7 días adicionales)
-- Registrar devoluciones
+Ejecuta las migraciones:
 
-#### Para Miembros
-
-```
-/member/dashboard      - Dashboard personal
-/member/loans          - Mis préstamos activos
-/member/reservations   - Mis reservaciones (en desarrollo)
+```bash
+php artisan migrate
 ```
 
----
+Carga los datos iniciales:
 
-## 👥 Roles y Permisos
-
-### 🔓 Usuario Invitado (Guest)
-- Ver página principal
-- Registrarse en el sistema
-
-### 👤 Miembro (Member)
-- Dashboard personalizado
-- Ver mis préstamos
-- Actualizar perfil
-- Solicitar reservaciones
-
-### 📚 Bibliotecario (Librarian)
-- Todo lo de Member +
-- Dashboard con estadísticas
-- CRUD completo de libros
-- CRUD completo de préstamos
-- Actualizar estado de libros
-- Renovar préstamos
-- Registrar devoluciones
-- Restaurar libros eliminados
-
-### 👑 Administrador (Admin)
-- Todo lo de Librarian +
-- Gestión de usuarios
-- Configuración del sistema
-- Reportes avanzados
-- Acceso a todas las funciones
-
----
-
-## 📂 Estructura del Proyecto
-
+```bash
+php artisan db:seed
 ```
+
+También puedes recrear la base de datos y cargar los seeders en un solo comando:
+
+```bash
+php artisan migrate:fresh --seed
+```
+
+> Advertencia: `migrate:fresh --seed` elimina las tablas existentes, vuelve a ejecutar las migraciones y carga nuevamente los datos de prueba.
+
+### Tablas principales
+
+| Tabla | Descripción |
+| --- | --- |
+| `users` | Usuarios del sistema, roles, credenciales y soft deletes. |
+| `categories` | Categorías utilizadas para clasificar libros. |
+| `books` | Catálogo de libros, ISBN, autor, año, copias y estado. |
+| `loans` | Registro de préstamos, devoluciones, fechas y estados. |
+| `sessions` | Sesiones de Laravel almacenadas en base de datos. |
+
+## Ejecución Local
+
+Puedes ejecutar el entorno de desarrollo completo con:
+
+```bash
+composer run dev
+```
+
+También puedes ejecutar Laravel y Vite por separado.
+
+Terminal 1:
+
+```bash
+php artisan serve
+```
+
+Terminal 2:
+
+```bash
+npm run dev
+```
+
+Luego abre la aplicación en:
+
+```text
+http://localhost:8000
+```
+
+Rutas principales:
+
+```text
+http://localhost:8000
+http://localhost:8000/login
+http://localhost:8000/register
+http://localhost:8000/dashboard
+http://localhost:8000/librarian/dashboard
+http://localhost:8000/admin/dashboard
+http://localhost:8000/member/dashboard
+```
+
+## Credenciales de Prueba
+
+El seeder principal crea un usuario base de prueba.
+
+| Rol | Email | Contraseña |
+| --- | --- | --- |
+| Miembro | `test@example.com` | `password` |
+
+> Nota: El rol por defecto de los usuarios es `member`. Para probar las rutas de `admin` o `librarian`, puedes actualizar el campo `role` manualmente en la base de datos durante el desarrollo.
+
+Ejemplo:
+
+```sql
+UPDATE users SET role = 'admin' WHERE email = 'test@example.com';
+```
+
+O para bibliotecario:
+
+```sql
+UPDATE users SET role = 'librarian' WHERE email = 'test@example.com';
+```
+
+## Comandos Útiles
+
+Ejecutar migraciones:
+
+```bash
+php artisan migrate
+```
+
+Ejecutar seeders:
+
+```bash
+php artisan db:seed
+```
+
+Recrear la base de datos con datos iniciales:
+
+```bash
+php artisan migrate:fresh --seed
+```
+
+Iniciar el servidor local:
+
+```bash
+php artisan serve
+```
+
+Ejecutar Vite:
+
+```bash
+npm run dev
+```
+
+Compilar assets para producción:
+
+```bash
+npm run build
+```
+
+Ejecutar el entorno completo de desarrollo:
+
+```bash
+composer run dev
+```
+
+Ejecutar tests:
+
+```bash
+php artisan test
+```
+
+Ejecutar el script de pruebas definido en Composer:
+
+```bash
+composer test
+```
+
+Ejecutar Laravel Pint:
+
+```bash
+./vendor/bin/pint
+```
+
+## Estructura del Proyecto
+
+```text
 BiblioTech/
 ├── app/
-│   ├── Actions/                 # Acciones personalizadas
 │   ├── Http/
 │   │   ├── Controllers/
-│   │   │   ├── Auth/           # Controladores de autenticación
+│   │   │   ├── Auth/
 │   │   │   ├── BookController.php
-│   │   │   ├── LoanController.php
 │   │   │   ├── DashboardController.php
-│   │   │   └── LibrarianDashboardController.php
+│   │   │   ├── LibrarianDashboardController.php
+│   │   │   └── LoanController.php
 │   │   └── Middleware/
-│   │       └── CheckRole.php   # Middleware de roles
-│   ├── Livewire/               # Componentes Livewire
+│   │       └── CheckRole.php
+│   │
+│   ├── Livewire/
 │   ├── Models/
-│   │   ├── User.php
 │   │   ├── Book.php
+│   │   ├── Category.php
 │   │   ├── Loan.php
-│   │   └── Category.php
+│   │   └── User.php
 │   └── Providers/
+│
 ├── database/
-│   ├── migrations/             # Migraciones de BD
-│   ├── seeders/                # Seeders (en desarrollo)
-│   └── factories/              # Factories para testing
+│   ├── factories/
+│   ├── migrations/
+│   │   ├── create_users_table.php
+│   │   ├── create_cache_table.php
+│   │   ├── create_jobs_table.php
+│   │   ├── create_categories_table.php
+│   │   ├── create_books_table.php
+│   │   ├── create_loans_table.php
+│   │   └── create_sessions_table.php
+│   └── seeders/
+│       └── DatabaseSeeder.php
+│
+├── public/
 ├── resources/
-│   ├── views/
-│   │   ├── books/             # Vistas de libros
-│   │   ├── loans/             # Vistas de préstamos
-│   │   ├── librarian/         # Vistas de bibliotecario
-│   │   ├── layouts/           # Layouts principales
-│   │   └── components/        # Componentes Blade
 │   ├── css/
-│   └── js/
+│   ├── js/
+│   └── views/
+│       ├── admin/
+│       ├── books/
+│       ├── components/
+│       ├── librarian/
+│       ├── livewire/
+│       ├── loans/
+│       └── member/
+│
 ├── routes/
-│   ├── web.php                # Rutas web
-│   └── console.php            # Comandos Artisan
-├── tests/                     # Tests automatizados
-├── .env.example               # Variables de entorno ejemplo
-├── composer.json              # Dependencias PHP
-├── package.json               # Dependencias Node
-└── README.md                  # Este archivo
+│   ├── console.php
+│   └── web.php
+│
+├── storage/
+├── tests/
+├── .env.example
+├── artisan
+├── composer.json
+├── package.json
+├── phpunit.xml
+├── DIAGRAMAS.md
+├── TECHNICAL_DOCUMENTATION.md
+└── vite.config.js
 ```
 
----
+## Documentación Técnica
 
-## 🏗 Estado del Desarrollo
+El repositorio incluye documentación adicional en:
 
-### ✅ Completado
-
-- [x] Sistema de autenticación con Fortify
-- [x] Sistema de roles y permisos
-- [x] CRUD completo de libros
-- [x] CRUD completo de préstamos
-- [x] Soft deletes en Books y Users
-- [x] Dashboard de bibliotecario
-- [x] Middleware de control de acceso
-- [x] Renovación de préstamos
-- [x] Restauración de libros eliminados
-- [x] Manejo de libros eliminados en préstamos
-- [x] Paginación en listados
-- [x] Interfaz responsive con Tailwind
-- [x] Integración con Livewire y Flux UI
-
-### 🚧 En Desarrollo
-
-- [ ] Dashboard de administrador (ruta definida)
-- [ ] Dashboard de miembro (ruta definida)
-- [ ] Sistema de búsqueda avanzada de libros
-- [ ] Filtros en listados
-
-### ⏳ Pendiente
-
-- [ ] CRUD completo de categorías
-- [ ] Sistema de reservaciones
-- [ ] Seeders con datos de prueba
-- [ ] Sistema de reportes avanzados
-- [ ] Gestión de usuarios (panel admin)
-- [ ] Sistema de multas
-- [ ] Notificaciones por email
-- [ ] Tests automatizados (PHPUnit)
-- [ ] API RESTful (opcional)
-- [ ] Exportación de reportes (PDF/Excel)
-
----
-
-## 🗺 Roadmap
-
-### Versión 1.1 (Próximo Release)
-- [ ] Completar dashboards de admin y member
-- [ ] Implementar CRUD de categorías
-- [ ] Agregar búsqueda y filtros avanzados
-- [ ] Crear seeders completos
-- [ ] Documentación de API (si se implementa)
-
-### Versión 1.2
-- [ ] Sistema de reservaciones funcional
-- [ ] Gestión de usuarios desde panel admin
-- [ ] Sistema de reportes y estadísticas
-- [ ] Notificaciones básicas
-
-### Versión 2.0
-- [ ] Sistema de multas automático
-- [ ] Notificaciones por email
-- [ ] API RESTful completa
-- [ ] Exportación de reportes
-- [ ] Tests automatizados con >80% cobertura
-
----
-
-## 🤝 Contribución
-
-Las contribuciones son bienvenidas. Para contribuir:
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'feat: agrega característica increíble'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
-### Convenciones de Commits
-
-Seguimos [Conventional Commits](https://www.conventionalcommits.org/):
-
-```
-feat: nueva característica
-fix: corrección de bug
-docs: cambios en documentación
-style: cambios de formato (sin afectar código)
-refactor: refactorización de código
-test: agregar o modificar tests
-chore: cambios en build o herramientas
+```text
+TECHNICAL_DOCUMENTATION.md
+DIAGRAMAS.md
 ```
 
-### Estándares de Código
+Estos documentos describen con mayor detalle:
 
-- Seguir PSR-12 para código PHP
-- Usar Laravel Pint: `./vendor/bin/pint`
-- Comentar código complejo
-- Escribir tests para nuevas features
+- Arquitectura general del proyecto.
+- Modelo de dominio.
+- Relaciones entre entidades.
+- Flujos principales del sistema.
+- Diagramas visuales.
+- Estructura técnica.
+- Organización de módulos.
+- Consideraciones de seguridad y autorización.
 
----
+## Recomendaciones Técnicas
 
-## 📄 Licencia
+Antes de considerar el repositorio como una versión final, se recomienda revisar:
 
-Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
+- Remover `vendor/` y `node_modules/` del control de versiones.
+- Confirmar que `.gitignore` excluya dependencias generadas.
+- Corregir la ruta `books.updateCopies` o implementar el método correspondiente en `BookController`.
+- Revisar el conteo de libros no disponibles en el dashboard de bibliotecario.
+- Agregar seeders completos para roles `admin`, `librarian` y `member`.
+- Completar las vistas administrativas y de miembros si aún están como base inicial.
+- Ejecutar pruebas con `php artisan test`.
+- Verificar compilación de assets con `npm run build`.
 
----
+## Autor
 
-## 📧 Contacto
+Desarrollado por **Cristofer Guillen**.
 
-**Desarrollador:** Guillen Cristofer  
-**GitHub:** [@guillencristofer911-star](https://github.com/guillencristofer911-star)  
-**Repositorio:** [BiblioTech](https://github.com/guillencristofer911-star/BiblioTech)
+- GitHub: [@CristoferGuillen](https://github.com/CristoferGuillen)
+- Repositorio: [BiblioTech](https://github.com/CristoferGuillen/BiblioTech)
 
----
+## Licencia
 
-## 🙏 Agradecimientos
-
-- [Laravel](https://laravel.com) - Framework PHP
-- [Livewire](https://livewire.laravel.com) - Componentes reactivos
-- [Flux UI](https://flux.laravel.com) - Componentes de interfaz
-- [Tailwind CSS](https://tailwindcss.com) - Framework CSS
-- Comunidad de Laravel por recursos y documentación
-
----
-
-## 📚 Recursos Adicionales
-
-- [Documentación de Laravel 12](https://laravel.com/docs/12.x)
-- [Documentación de Livewire 3](https://livewire.laravel.com/docs/3.x)
-- [Documentación de Flux](https://flux.laravel.com/docs)
-- [Conventional Commits](https://www.conventionalcommits.org/)
-- [PSR-12 Coding Standard](https://www.php-fig.org/psr/psr-12/)
-
----
-
-<div align="center">
-  <p>Hecho con ❤️ y Laravel</p>
-  <p>⭐ Si este proyecto te fue útil, considera darle una estrella en GitHub</p>
-</div>
+Este proyecto está disponible bajo la licencia **MIT**.

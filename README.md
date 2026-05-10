@@ -3,7 +3,6 @@
 ![PHP](https://img.shields.io/badge/PHP-8.2%2B-777BB4?style=flat-square&logo=php&logoColor=white)
 ![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?style=flat-square&logo=laravel&logoColor=white)
 ![Livewire](https://img.shields.io/badge/Livewire-3-4E56A6?style=flat-square&logo=livewire&logoColor=white)
-![Flux UI](https://img.shields.io/badge/Flux_UI-2.9-111827?style=flat-square)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0%2B-4479A1?style=flat-square&logo=mysql&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?style=flat-square&logo=tailwindcss&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=flat-square&logo=vite&logoColor=white)
@@ -11,210 +10,199 @@
 
 <p align="center">
   <a href="https://skillicons.dev">
-    <img src="https://skillicons.dev/icons?i=php,laravel,mysql,tailwind,vite,js,git&theme=light" alt="Tecnologías utilizadas en BiblioTech" />
+    <img src="https://skillicons.dev/icons?i=php,laravel,mysql,tailwind,vite,js,git&theme=light" alt="Technologies used in BiblioTech" />
   </a>
 </p>
 
-**BiblioTech** es una aplicación web full-stack para la gestión de bibliotecas. El sistema permite administrar libros, categorías, usuarios, préstamos, devoluciones y renovaciones desde una plataforma construida con **Laravel**, **Livewire**, **Flux UI**, **Blade**, **Tailwind CSS** y **MySQL**.
+**BiblioTech** is a web application for library management. The system allows librarians to manage books, categories, users, loans, returns, and renewals from a centralized platform built with **Laravel**, **Blade**, **Livewire**, **Tailwind CSS**, and **MySQL**.
 
-El proyecto está diseñado para digitalizar procesos comunes de una biblioteca, centralizando el catálogo de libros, el control de copias disponibles, el registro de préstamos y la separación de funcionalidades por roles.
+The project is designed to digitize common library operations by centralizing the book catalog, available copies, loan tracking, returns, and role-based access in a browser-accessible system.
 
-> Nota: La interfaz de la aplicación está actualmente en español, ya que el proyecto está orientado a entornos bibliotecarios hispanohablantes.
+> Note: The application interface is currently in Spanish, as the project is designed for library management in Spanish-speaking environments.
 
-## Tabla de Contenidos
+## Table of Contents
 
-- [Tecnologías](#tecnologías)
-- [Descripción General](#descripción-general)
-- [Características Principales](#características-principales)
-- [Roles del Sistema](#roles-del-sistema)
-- [Modelo de Dominio](#modelo-de-dominio)
-- [Requisitos Previos](#requisitos-previos)
-- [Instalación](#instalación)
-- [Configuración](#configuración)
-- [Base de Datos](#base-de-datos)
-- [Ejecución Local](#ejecución-local)
-- [Credenciales de Prueba](#credenciales-de-prueba)
-- [Comandos Útiles](#comandos-útiles)
-- [Estructura del Proyecto](#estructura-del-proyecto)
-- [Documentación Técnica](#documentación-técnica)
-- [Autor](#autor)
-- [Licencia](#licencia)
+- [Technologies](#technologies)
+- [Overview](#overview)
+- [Main Features](#main-features)
+- [System Roles](#system-roles)
+- [Domain Model](#domain-model)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Database](#database)
+- [Running Locally](#running-locally)
+- [Test Credentials](#test-credentials)
+- [Useful Commands](#useful-commands)
+- [Project Structure](#project-structure)
+- [Technical Documentation](#technical-documentation)
+- [Author](#author)
+- [License](#license)
 
-## Tecnologías
+## Technologies
 
 - **PHP 8.2+**
 - **Laravel 12**
-- **Laravel Fortify**
-- **Laravel Sanctum**
-- **Livewire 3**
-- **Livewire Volt**
-- **Flux UI**
+- **MySQL**
 - **Blade**
-- **Tailwind CSS 4**
-- **Vite 7**
-- **MySQL 8.0+**
-- **Eloquent ORM**
-- **Composer**
-- **npm**
+- **Livewire**
+- **Tailwind CSS**
+- **Vite**
 
-## Descripción General
+## Overview
 
-BiblioTech fue desarrollado como una solución web para apoyar la gestión diaria de una biblioteca. Su objetivo es reemplazar procesos manuales o dispersos por una plataforma centralizada, organizada y accesible desde el navegador.
+BiblioTech was developed as a web solution to support the daily operation of a library. Its goal is to replace manual or scattered processes with an organized, traceable, and browser-accessible platform.
 
-La aplicación incluye autenticación, control de acceso basado en roles, gestión de libros, relación con categorías, administración de préstamos, devolución de libros, renovación de préstamos, soft deletes para mantener trazabilidad y dashboards adaptados al tipo de usuario.
+The application includes authentication, role-based access control, book management, category organization, loan registration, book returns, loan renewals, soft deletes for record traceability, and dashboards adapted to each type of user.
 
-El sistema sigue la arquitectura **MVC** de Laravel, separando la lógica de negocio en controladores, la persistencia de datos en modelos Eloquent y la presentación en vistas Blade con componentes Livewire y Flux UI.
+The system follows Laravel's **MVC** architecture, separating business logic into controllers, data persistence into Eloquent models, and presentation into Blade views.
 
-## Características Principales
+## Main Features
 
-### Autenticación y autorización
+### Authentication and authorization
 
-- Registro e inicio de sesión de usuarios.
-- Autenticación basada en sesiones de Laravel.
-- Integración con Laravel Fortify.
-- Control de acceso basado en roles.
-- Middleware personalizado `CheckRole`.
-- Redirección de usuarios según su rol.
-- Rutas protegidas para usuarios autenticados.
-- Vista de acceso no autorizado.
+- User registration and login.
+- Session-based authentication with Laravel.
+- Route protection for authenticated users.
+- Role-based access control.
+- Custom `CheckRole` middleware.
+- User redirection according to role.
+- Unauthorized access view.
 
-### Gestión de usuarios
+### User management
 
-- Registro de usuarios del sistema.
-- Roles disponibles:
-  - Administrador.
-  - Bibliotecario.
-  - Miembro.
-- Campo de teléfono opcional.
-- Soft deletes para mantener trazabilidad.
-- Métodos auxiliares para validar roles.
-- Relación entre usuarios y préstamos.
-- Historial de préstamos por usuario.
+- System user registration.
+- Role assignment for different types of users.
+- Optional phone field.
+- Soft delete support for traceability.
+- Helper methods to validate user roles.
+- Relationship between users and loans.
+- Loan history by user.
 
-### Gestión de libros
+### Book management
 
-- Registro de libros.
-- Edición de información bibliográfica.
-- Visualización de detalle de libros.
-- Eliminación lógica mediante soft deletes.
-- Restauración de libros eliminados.
-- Validación de ISBN único.
-- Gestión de título, autor, año de publicación, categoría, copias disponibles y estado.
-- Estados de libro:
-  - Disponible.
-  - No disponible.
-- Paginación de registros.
-- Relación entre libros y categorías.
-- Manejo de libros eliminados dentro del historial de préstamos.
+- Book registration.
+- Book information editing.
+- Book detail view.
+- Soft delete support.
+- Restoration of deleted books.
+- Unique ISBN validation.
+- Management of title, author, publication year, category, available copies, and status.
+- Book statuses:
+  - Available.
+  - Unavailable.
+- Paginated book listings.
+- Relationship between books and categories.
+- Handling of deleted books in loan history.
 
-### Gestión de categorías
+### Category management
 
-- Modelo de categorías para clasificar libros.
-- Nombre único por categoría.
-- Descripción opcional.
-- Relación entre categoría y libros.
-- Base estructural para organizar el catálogo bibliográfico.
+- Category model to classify books.
+- Unique category names.
+- Optional category description.
+- Relationship between categories and books.
+- Base structure to organize the library catalog.
 
-### Gestión de préstamos
+### Loan management
 
-- Registro de préstamos de libros.
-- Asociación entre préstamo, usuario y libro.
-- Validación de disponibilidad antes de crear un préstamo.
-- Disminución automática de copias disponibles al prestar un libro.
-- Fecha de préstamo.
-- Fecha estimada de devolución.
-- Estados de préstamo:
-  - En curso.
-  - Devuelto.
-  - Atrasado.
-- Registro de devolución.
-- Incremento automático de copias disponibles al devolver un libro.
-- Renovación de préstamos por 7 días adicionales.
-- Manejo de préstamos asociados a libros eliminados lógicamente.
+- Book loan registration.
+- Association between loan, user, and book.
+- Availability validation before creating a loan.
+- Automatic decrease of available copies when a book is loaned.
+- Loan date registration.
+- Due date registration.
+- Loan statuses:
+  - Active.
+  - Returned.
+  - Overdue.
+- Book return registration.
+- Automatic increase of available copies when a book is returned.
+- Loan renewal for additional days.
+- Handling of loans related to soft-deleted books.
 
-### Dashboard de bibliotecario
+### Librarian dashboard
 
-- Vista personalizada para bibliotecarios.
-- Total de libros registrados.
-- Total de préstamos.
-- Conteo de préstamos en curso.
-- Conteo de préstamos atrasados.
-- Conteo de libros disponibles.
-- Conteo de libros no disponibles.
-- Traducciones de roles y estados para mostrar información en español.
-- Acceso rápido a la gestión operativa de la biblioteca.
+- Personalized dashboard for librarians.
+- Total registered books.
+- Total loans.
+- Active loan count.
+- Overdue loan count.
+- Available book count.
+- Unavailable book count.
+- Translated role and status labels for the Spanish interface.
+- Quick access to library operation modules.
 
-### Panel administrativo
+### Administrative panel
 
-- Ruta base para dashboard de administrador.
-- Ruta base para gestión de usuarios.
-- Ruta base para configuración del sistema.
-- Ruta base para reportes.
-- Separación de acceso para usuarios con rol administrador.
-- Base preparada para extender funcionalidades administrativas.
+- Base route for the administrator dashboard.
+- Base route for user management.
+- Base route for system settings.
+- Base route for reports.
+- Role separation for administrator users.
+- Foundation prepared for future administrative features.
 
-### Panel de miembro
+### Member panel
 
-- Ruta base para dashboard de miembro.
-- Ruta base para consulta de préstamos personales.
-- Ruta base para futuras reservaciones.
-- Separación de acceso para usuarios con rol miembro.
+- Base route for the member dashboard.
+- Base route for personal loan consultation.
+- Base route for future reservations.
+- Role separation for member users.
 
-### Seguridad y validaciones
+### Security and validation
 
-- Protección CSRF en formularios.
-- Hashing automático de contraseñas.
-- Prevención de SQL Injection mediante Eloquent ORM.
-- Escapado automático de datos en vistas Blade.
-- Middleware de autorización por roles.
-- Validación de campos obligatorios.
-- Validación de ISBN único.
-- Validación de años de publicación.
-- Validación de existencia de usuarios y libros antes de crear préstamos.
-- Restricción de acciones según rol.
+- CSRF protection in forms.
+- Password hashing.
+- SQL Injection prevention through Eloquent ORM.
+- Automatic data escaping in Blade views.
+- Authorization middleware by role.
+- Required field validation.
+- Unique ISBN validation.
+- Publication year validation.
+- User and book existence validation before creating loans.
+- Action restrictions according to user role.
 
-## Roles del Sistema
+## System Roles
 
-BiblioTech utiliza roles para separar responsabilidades y permisos dentro de la aplicación.
+BiblioTech uses roles to separate responsibilities and permissions within the application.
 
-| Rol | Descripción |
+| Role | Description |
 | --- | --- |
-| `admin` | Tiene acceso a las rutas administrativas, configuración, usuarios y reportes. |
-| `librarian` | Puede gestionar libros, préstamos, devoluciones, renovaciones y el dashboard operativo. |
-| `member` | Puede acceder a su dashboard personal, consultar sus préstamos y futuras reservaciones. |
+| `admin` | Has access to administrative routes, settings, users, and reports. |
+| `librarian` | Can manage books, loans, returns, renewals, and the operational dashboard. |
+| `member` | Can access a personal dashboard, view personal loans, and use member-related features. |
 
-## Modelo de Dominio
+## Domain Model
 
-El sistema está organizado alrededor de las principales entidades de una biblioteca.
+The system is organized around the main entities of a library management platform.
 
-| Entidad | Propósito |
+| Entity | Purpose |
 | --- | --- |
-| `User` | Representa a los usuarios del sistema, sus datos de autenticación, rol y préstamos. |
-| `Book` | Representa los libros del catálogo bibliográfico. |
-| `Category` | Clasifica los libros por tipo, tema o área. |
-| `Loan` | Representa un préstamo de un libro a un usuario. |
+| `User` | Represents system users, authentication data, role, and loan relationships. |
+| `Book` | Represents books in the library catalog. |
+| `Category` | Classifies books by topic, type, or area. |
+| `Loan` | Represents the loan of a book to a user. |
 
-### Relaciones principales
+### Main relationships
 
-- Un `User` puede tener muchos `Loan`.
-- Un `Book` pertenece a una `Category`.
-- Una `Category` puede tener muchos `Book`.
-- Un `Book` puede estar asociado a muchos `Loan`.
-- Un `Loan` pertenece a un `User`.
-- Un `Loan` pertenece a un `Book`.
+- A `User` may have many `Loan` records.
+- A `Book` belongs to a `Category`.
+- A `Category` may have many `Book` records.
+- A `Book` may be associated with many `Loan` records.
+- A `Loan` belongs to a `User`.
+- A `Loan` belongs to a `Book`.
 
-## Requisitos Previos
+## Prerequisites
 
-Antes de instalar el proyecto, asegúrate de tener instalado:
+Before installing the project, make sure you have the following installed:
 
-- PHP 8.2 o superior.
+- PHP 8.2 or higher.
 - Composer.
-- MySQL 8.0 o superior.
-- Node.js 18 o superior.
+- MySQL 8.0 or higher.
+- Node.js 18 or higher.
 - npm.
 - Git.
 
-Extensiones PHP recomendadas para ejecutar Laravel con MySQL:
+Recommended PHP extensions for running Laravel with MySQL:
 
 ```ini
 extension=bcmath
@@ -230,53 +218,53 @@ extension=xml
 extension=zip
 ```
 
-## Instalación
+## Installation
 
-Clona el repositorio:
+Clone the repository:
 
 ```bash
 git clone https://github.com/CristoferGuillen/BiblioTech.git
 ```
 
-Entra a la carpeta del proyecto:
+Enter the project folder:
 
 ```bash
 cd BiblioTech
 ```
 
-Instala las dependencias de PHP:
+Install PHP dependencies:
 
 ```bash
 composer install
 ```
 
-Instala las dependencias de JavaScript:
+Install JavaScript dependencies:
 
 ```bash
 npm install
 ```
 
-Copia el archivo de entorno:
+Copy the environment file:
 
 ```bash
 cp .env.example .env
 ```
 
-En Windows PowerShell:
+On Windows PowerShell:
 
 ```powershell
 Copy-Item .env.example .env
 ```
 
-Genera la clave de la aplicación:
+Generate the application key:
 
 ```bash
 php artisan key:generate
 ```
 
-## Configuración
+## Configuration
 
-Edita el archivo `.env` y configura los valores principales de la aplicación:
+Edit the `.env` file and configure the main application values:
 
 ```env
 APP_NAME=BiblioTech
@@ -285,7 +273,7 @@ APP_DEBUG=true
 APP_URL=http://localhost:8000
 ```
 
-Configura la conexión a MySQL:
+Configure the MySQL connection:
 
 ```env
 DB_CONNECTION=mysql
@@ -296,62 +284,62 @@ DB_USERNAME=root
 DB_PASSWORD=your_password
 ```
 
-Configura las sesiones:
+Configure database sessions:
 
 ```env
 SESSION_DRIVER=database
 SESSION_LIFETIME=120
 ```
 
-Crea una base de datos llamada `bibliotech` antes de ejecutar las migraciones.
+Create a database named `bibliotech` before running the migrations.
 
-Puedes crearla desde MySQL con:
+You can create it from MySQL with:
 
 ```sql
 CREATE DATABASE bibliotech CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-## Base de Datos
+## Database
 
-Ejecuta las migraciones:
+Run the migrations:
 
 ```bash
 php artisan migrate
 ```
 
-Carga los datos iniciales:
+Load the initial data:
 
 ```bash
 php artisan db:seed
 ```
 
-También puedes recrear la base de datos y cargar los seeders en un solo comando:
+You can also reset the database and load seeders in a single command:
 
 ```bash
 php artisan migrate:fresh --seed
 ```
 
-> Advertencia: `migrate:fresh --seed` elimina las tablas existentes, vuelve a ejecutar las migraciones y carga nuevamente los datos de prueba.
+> Warning: `migrate:fresh --seed` deletes the existing tables, runs all migrations again, and loads the seed data.
 
-### Tablas principales
+### Main tables
 
-| Tabla | Descripción |
+| Table | Description |
 | --- | --- |
-| `users` | Usuarios del sistema, roles, credenciales y soft deletes. |
-| `categories` | Categorías utilizadas para clasificar libros. |
-| `books` | Catálogo de libros, ISBN, autor, año, copias y estado. |
-| `loans` | Registro de préstamos, devoluciones, fechas y estados. |
-| `sessions` | Sesiones de Laravel almacenadas en base de datos. |
+| `users` | System users, roles, credentials, and soft deletes. |
+| `categories` | Categories used to classify books. |
+| `books` | Library catalog with ISBN, author, year, copies, and status. |
+| `loans` | Loan records, returns, dates, and statuses. |
+| `sessions` | Laravel sessions stored in the database. |
 
-## Ejecución Local
+## Running Locally
 
-Puedes ejecutar el entorno de desarrollo completo con:
+Run the complete development environment with:
 
 ```bash
 composer run dev
 ```
 
-También puedes ejecutar Laravel y Vite por separado.
+You can also run Laravel and Vite separately.
 
 Terminal 1:
 
@@ -365,13 +353,13 @@ Terminal 2:
 npm run dev
 ```
 
-Luego abre la aplicación en:
+Then open the application at:
 
 ```text
 http://localhost:8000
 ```
 
-Rutas principales:
+Main routes:
 
 ```text
 http://localhost:8000
@@ -383,91 +371,91 @@ http://localhost:8000/admin/dashboard
 http://localhost:8000/member/dashboard
 ```
 
-## Credenciales de Prueba
+## Test Credentials
 
-El seeder principal crea un usuario base de prueba.
+The main seeder creates a base test user.
 
-| Rol | Email | Contraseña |
+| Role | Email | Password |
 | --- | --- | --- |
-| Miembro | `test@example.com` | `password` |
+| Member | `test@example.com` | `password` |
 
-> Nota: El rol por defecto de los usuarios es `member`. Para probar las rutas de `admin` o `librarian`, puedes actualizar el campo `role` manualmente en la base de datos durante el desarrollo.
+> Note: The default role for new users is `member`. To test `admin` or `librarian` routes during development, update the `role` field manually in the database.
 
-Ejemplo:
+Example for administrator access:
 
 ```sql
 UPDATE users SET role = 'admin' WHERE email = 'test@example.com';
 ```
 
-O para bibliotecario:
+Example for librarian access:
 
 ```sql
 UPDATE users SET role = 'librarian' WHERE email = 'test@example.com';
 ```
 
-## Comandos Útiles
+## Useful Commands
 
-Ejecutar migraciones:
+Run migrations:
 
 ```bash
 php artisan migrate
 ```
 
-Ejecutar seeders:
+Run seeders:
 
 ```bash
 php artisan db:seed
 ```
 
-Recrear la base de datos con datos iniciales:
+Recreate the database with seed data:
 
 ```bash
 php artisan migrate:fresh --seed
 ```
 
-Iniciar el servidor local:
+Start the local server:
 
 ```bash
 php artisan serve
 ```
 
-Ejecutar Vite:
+Run Vite:
 
 ```bash
 npm run dev
 ```
 
-Compilar assets para producción:
+Build assets for production:
 
 ```bash
 npm run build
 ```
 
-Ejecutar el entorno completo de desarrollo:
+Run the complete development environment:
 
 ```bash
 composer run dev
 ```
 
-Ejecutar tests:
+Run tests:
 
 ```bash
 php artisan test
 ```
 
-Ejecutar el script de pruebas definido en Composer:
+Run the Composer test script:
 
 ```bash
 composer test
 ```
 
-Ejecutar Laravel Pint:
+Run Laravel Pint:
 
 ```bash
 ./vendor/bin/pint
 ```
 
-## Estructura del Proyecto
+## Project Structure
 
 ```text
 BiblioTech/
@@ -532,46 +520,33 @@ BiblioTech/
 └── vite.config.js
 ```
 
-## Documentación Técnica
+## Technical Documentation
 
-El repositorio incluye documentación adicional en:
+The repository includes additional technical documentation in:
 
 ```text
 TECHNICAL_DOCUMENTATION.md
 DIAGRAMAS.md
 ```
 
-Estos documentos describen con mayor detalle:
+These documents describe in greater detail:
 
-- Arquitectura general del proyecto.
-- Modelo de dominio.
-- Relaciones entre entidades.
-- Flujos principales del sistema.
-- Diagramas visuales.
-- Estructura técnica.
-- Organización de módulos.
-- Consideraciones de seguridad y autorización.
+- General project architecture.
+- Domain model.
+- Entity relationships.
+- Main system workflows.
+- Visual diagrams.
+- Technical structure.
+- Module organization.
+- Security and authorization considerations.
 
-## Recomendaciones Técnicas
+## Author
 
-Antes de considerar el repositorio como una versión final, se recomienda revisar:
-
-- Remover `vendor/` y `node_modules/` del control de versiones.
-- Confirmar que `.gitignore` excluya dependencias generadas.
-- Corregir la ruta `books.updateCopies` o implementar el método correspondiente en `BookController`.
-- Revisar el conteo de libros no disponibles en el dashboard de bibliotecario.
-- Agregar seeders completos para roles `admin`, `librarian` y `member`.
-- Completar las vistas administrativas y de miembros si aún están como base inicial.
-- Ejecutar pruebas con `php artisan test`.
-- Verificar compilación de assets con `npm run build`.
-
-## Autor
-
-Desarrollado por **Cristofer Guillen**.
+Developed by **Cristofer Guillen**.
 
 - GitHub: [@CristoferGuillen](https://github.com/CristoferGuillen)
-- Repositorio: [BiblioTech](https://github.com/CristoferGuillen/BiblioTech)
+- Repository: [BiblioTech](https://github.com/CristoferGuillen/BiblioTech)
 
-## Licencia
+## License
 
-Este proyecto está disponible bajo la licencia **MIT**.
+This project is available under the **MIT** license.
